@@ -175,12 +175,9 @@ fi
 
 if [ "$SKIP_TYPO3_SETUP" = false ]; then
     echo "    Running TYPO3 setup (this may take a moment)..."
-    ddev exec env \
-        "TYPO3_SETUP_ADMIN_PASSWORD=$ADMIN_PASSWORD" \
-        "TYPO3_SETUP_ADMIN_EMAIL=$ADMIN_EMAIL" \
-        "SETUP_ADMIN_USER=$ADMIN_USER" \
-        "SETUP_SITE_TITLE=$SITE_TITLE" \
-        bash -c 'vendor/bin/typo3 setup \
+    ddev exec \
+        env "TYPO3_SETUP_ADMIN_PASSWORD=${ADMIN_PASSWORD}" "TYPO3_SETUP_ADMIN_EMAIL=${ADMIN_EMAIL}" \
+        bash -c "vendor/bin/typo3 setup \
             --no-interaction \
             --driver=mysqli \
             --host=db \
@@ -188,10 +185,10 @@ if [ "$SKIP_TYPO3_SETUP" = false ]; then
             --dbname=db \
             --username=db \
             --password=db \
-            --admin-username="$SETUP_ADMIN_USER" \
-            --project-name="$SETUP_SITE_TITLE" \
+            --admin-username='${ADMIN_USER}' \
+            --project-name='${SITE_TITLE}' \
             --server-type=apache \
-            --force'
+            --force"
 fi
 echo ""
 
