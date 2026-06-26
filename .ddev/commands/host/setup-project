@@ -1,32 +1,59 @@
 #!/usr/bin/env bash
 ## Description: Initialize a fresh TYPO3 project (composer install, move sitepackage, DB setup)
-## Usage: setup-project [--admin-password=<password>] [--admin-email=<email>]
+## Usage: setup-project
 ## Example: ddev setup-project
-## Example: ddev setup-project --admin-password=MySecurePass1! --admin-email=dev@example.com
 
 set -euo pipefail
 
-# ── Defaults ─────────────────────────────────────────────────────────────────
-ADMIN_PASSWORD="Admin1234!"
-ADMIN_EMAIL="admin@example.com"
+DDEV_CONFIG="$(pwd)/.ddev/config.yaml"
+CURRENT_DDEV_NAME=$(grep "^name:" "$DDEV_CONFIG" | awk '{print $2}')
 
-# Parse optional arguments
-for arg in "$@"; do
-    case "$arg" in
-        --admin-password=*) ADMIN_PASSWORD="${arg#*=}" ;;
-        --admin-email=*)    ADMIN_EMAIL="${arg#*=}" ;;
-    esac
-done
-
-PROJECT_NAME=$(grep "^name:" "$(pwd)/.ddev/config.yaml" | awk '{print $2}')
-DDEV_URL="https://${PROJECT_NAME}.ddev.site"
+# Derive a readable default site title from the DDEV project name
+DEFAULT_SITE_TITLE=$(echo "$CURRENT_DDEV_NAME" | sed 's/[-_]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}')
 
 echo ""
 echo "============================================"
 echo "  TYPO3 Project Setup"
-echo "  URL: ${DDEV_URL}"
 echo "============================================"
+echo "  Press Enter to accept [defaults]."
 echo ""
+
+# ── Interactive prompts ───────────────────────────────────────────────────────
+read -rp "  Project name   [${DEFAULT_SITE_TITLE}]: " SITE_TITLE
+SITE_TITLE="${SITE_TITLE:-$DEFAULT_SITE_TITLE}"
+
+read -rp "  DDEV subdomain [${CURRENT_DDEV_NAME}]: " INPUT_DDEV_NAME
+INPUT_DDEV_NAME="${INPUT_DDEV_NAME:-$CURRENT_DDEV_NAME}"
+
+read -rp "  Admin username [admin]: " ADMIN_USER
+ADMIN_USER="${ADMIN_USER:-admin}"
+
+read -rsp "  Admin password [Admin1234!]: " ADMIN_PASSWORD
+echo ""
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-Admin1234!}"
+
+read -rp "  Admin email    [admin@example.com]: " ADMIN_EMAIL
+ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}"
+
+DDEV_URL="https://${INPUT_DDEV_NAME}.ddev.site"
+
+echo ""
+echo "  Site title : ${SITE_TITLE}"
+echo "  URL        : ${DDEV_URL}"
+echo "  Username   : ${ADMIN_USER}"
+echo "  Email      : ${ADMIN_EMAIL}"
+echo ""
+
+# ── Rename DDEV project if subdomain changed ──────────────────────────────────
+if [ "$INPUT_DDEV_NAME" != "$CURRENT_DDEV_NAME" ]; then
+    echo "==> Renaming DDEV project '${CURRENT_DDEV_NAME}' → '${INPUT_DDEV_NAME}'..."
+    awk -v name="$INPUT_DDEV_NAME" '/^name:/ {$0 = "name: " name} 1' "$DDEV_CONFIG" > "${DDEV_CONFIG}.tmp" \
+        && mv "${DDEV_CONFIG}.tmp" "$DDEV_CONFIG"
+    ddev restart
+    echo ""
+fi
+
+PROJECT_NAME="$INPUT_DDEV_NAME"
 
 # ── Step 1: Composer install ─────────────────────────────────────────────────
 echo "==> [1/7] Installing Composer dependencies..."
@@ -34,7 +61,7 @@ ddev composer install
 echo "    Done."
 echo ""
 
-# ── Step 2: Create required directories ──────────────────────────────────────
+# ── Step 2: Create required directories and patch site config ─────────────────
 echo "==> [2/7] Creating required directories..."
 ddev exec bash -c "mkdir -p \
     packages \
@@ -51,19 +78,18 @@ ddev exec bash -c "mkdir -p \
 echo "    Done."
 echo ""
 
-echo "==>       Patching site config for this project..."
+echo "==>       Patching site config..."
 ddev exec php << PHP
 <?php
-\$ddevUrl = '${DDEV_URL}';
-\$projectName = '${PROJECT_NAME}';
+\$ddevUrl   = '${DDEV_URL}';
+\$siteTitle = '${SITE_TITLE}';
 \$file = '/var/www/html/config/sites/sitepackage/config.yaml';
 \$content = file_get_contents(\$file);
-\$content = preg_replace("/^base: '.*'/m", "base: '\$ddevUrl/'", \$content);
-\$content = preg_replace("/^websiteTitle: '.*'/m", "websiteTitle: '\$projectName'", \$content);
+\$content = preg_replace("/^base: '.*'/m",        "base: '\$ddevUrl/'",  \$content);
+\$content = preg_replace("/^websiteTitle: '.*'/m", "websiteTitle: '\$siteTitle'", \$content);
 file_put_contents(\$file, \$content);
-echo "    config/sites/sitepackage/config.yaml\n";
-echo "      base → \$ddevUrl/\n";
-echo "      websiteTitle → \$projectName\n";
+echo "    base        → \$ddevUrl/\n";
+echo "    websiteTitle → \$siteTitle\n";
 PHP
 echo ""
 
@@ -87,34 +113,27 @@ ddev exec php << 'PHP'
 <?php
 $root = '/var/www/html';
 
-// Add version to packages/sitepackage/composer.json so path repo resolves correctly
 $pkgJsonPath = $root . '/packages/sitepackage/composer.json';
 $pkg = json_decode(file_get_contents($pkgJsonPath), true);
 $pkg['version'] = 'dev-local';
 file_put_contents($pkgJsonPath, json_encode($pkg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
-// Update root composer.json:
-//   - change conn/sitepackage constraint to @dev (matches dev-local from path repo)
-//   - remove the VCS gitlab repository for sitepackage (no longer needed)
 $composerJsonPath = $root . '/composer.json';
 $json = json_decode(file_get_contents($composerJsonPath), true);
-
 $json['require']['conn/sitepackage'] = '@dev';
-
 $json['repositories'] = array_values(array_filter(
     $json['repositories'],
     fn($r) => !($r['type'] === 'vcs' && str_contains($r['url'], 'sitepackage'))
 ));
-
 file_put_contents($composerJsonPath, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
-echo "    packages/sitepackage/composer.json → added version: dev-local\n";
-echo "    composer.json → conn/sitepackage set to @dev, VCS repo removed\n";
+echo "    packages/sitepackage/composer.json → version: dev-local\n";
+echo "    composer.json → conn/sitepackage @dev, VCS repo removed\n";
 PHP
 
 echo ""
 
-# ── Step 5: Update composer to use local package ─────────────────────────────
+# ── Step 5: Rewire composer to use packages/sitepackage ──────────────────────
 echo "==> [5/7] Updating Composer to use packages/sitepackage/ ..."
 ddev composer update conn/sitepackage --no-interaction
 echo "    Done. vendor/conn/sitepackage → symlink to packages/sitepackage/"
@@ -123,15 +142,16 @@ echo ""
 # ── Step 6: TYPO3 setup ──────────────────────────────────────────────────────
 echo "==> [6/7] Initializing TYPO3 (database schema + admin user)..."
 
-# Check if the database already contains tables and ask what to do
+SKIP_TYPO3_SETUP=false
+
 DB_TABLE_COUNT=$(ddev exec bash -c "mysql -uroot -proot -e \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='db';\" --skip-column-names 2>/dev/null || echo 0")
 DB_TABLE_COUNT=$(echo "$DB_TABLE_COUNT" | tr -d '[:space:]')
 
-if [ "$DB_TABLE_COUNT" -gt 0 ] 2>/dev/null; then
+if [ "${DB_TABLE_COUNT:-0}" -gt 0 ] 2>/dev/null; then
     echo ""
     echo "  ! Database already contains ${DB_TABLE_COUNT} tables."
     echo "    [d] Drop database and re-initialise (loses all data)"
-    echo "    [s] Skip TYPO3 setup and continue with existing database"
+    echo "    [s] Skip TYPO3 setup and keep existing database"
     echo ""
     read -r -p "  Choice [d/s]: " DB_CHOICE
     echo ""
@@ -143,54 +163,8 @@ if [ "$DB_TABLE_COUNT" -gt 0 ] 2>/dev/null; then
             echo "    Done."
             ;;
         s|S)
-            echo "    Skipping TYPO3 setup — using existing database."
-            echo ""
-            # Jump to extension:setup + cache:flush to ensure everything is wired up
-            echo "==>       Setting up extensions and flushing cache..."
-            ddev exec vendor/bin/typo3 extension:setup
-            ddev exec vendor/bin/typo3 cache:flush
-            echo "    Done."
-            echo ""
-            # Trusted hosts still needs to be set
-            ddev exec vendor/bin/typo3 configuration:set SYS/trustedHostsPattern ".+\.ddev\.site"
-            # Jump directly to step 7
-            echo "==> [7/7] Building sitepackage CSS..."
-            if ddev exec bash -c "test -f /var/www/html/packages/sitepackage/package.json"; then
-                ddev exec bash -c "cd /var/www/html/packages/sitepackage && npm install && npm run build"
-                echo "    Done."
-            else
-                echo "    Skipped — packages/sitepackage/package.json not found."
-                echo "    The sitepackage was installed from a dist archive (no SCSS build tools)."
-                echo "    Pre-compiled CSS from the distribution will be used as-is."
-            fi
-            echo ""
-            # Print summary and exit
-            echo "============================================"
-            echo "  Setup complete!"
-            echo "============================================"
-            echo ""
-            echo "  Backend: ${DDEV_URL}/typo3"
-            echo "  Username: admin"
-            echo "  Password: ${ADMIN_PASSWORD}"
-            echo "  Email:    ${ADMIN_EMAIL}"
-            echo ""
-            echo "  Next steps:"
-            echo "  1. Commit the local sitepackage to this project's git:"
-            echo "       git add packages/sitepackage/ composer.json composer.lock"
-            echo "       git commit -m 'Initialize sitepackage'"
-            echo ""
-            echo "  2. Log into TYPO3 backend, create a root page,"
-            echo "     mark it as 'Site Root', then configure in Site Management"
-            echo ""
-            echo "  3. Customize packages/sitepackage/ to your needs,"
-            echo "     rebuild CSS with: ddev exec 'cd /var/www/html/packages/sitepackage && npm run build'"
-            echo ""
-            echo "  4. Before deploying, update:"
-            echo "       deployer/deploy.php        (server hostname, user, path)"
-            echo "       .gitlab-ci.yml             (PRODUCTION_HOST, PRODUCTION_USER)"
-            echo "       config/sites/sitepackage/config.yaml  (production base URL)"
-            echo ""
-            exit 0
+            SKIP_TYPO3_SETUP=true
+            echo "    Keeping existing database."
             ;;
         *)
             echo "    Invalid choice. Aborting."
@@ -199,19 +173,26 @@ if [ "$DB_TABLE_COUNT" -gt 0 ] 2>/dev/null; then
     esac
 fi
 
-echo "    Running TYPO3 setup (this may take a moment)..."
-ddev exec env "TYPO3_SETUP_ADMIN_PASSWORD=$ADMIN_PASSWORD" "TYPO3_SETUP_ADMIN_EMAIL=$ADMIN_EMAIL" bash -c "vendor/bin/typo3 setup \
-    --no-interaction \
-    --driver=mysqli \
-    --host=db \
-    --port=3306 \
-    --dbname=db \
-    --username=db \
-    --password=db \
-    --admin-username=admin \
-    "--project-name=${PROJECT_NAME}" \
-    --server-type=apache \
-    --force"
+if [ "$SKIP_TYPO3_SETUP" = false ]; then
+    echo "    Running TYPO3 setup (this may take a moment)..."
+    ddev exec env \
+        "TYPO3_SETUP_ADMIN_PASSWORD=$ADMIN_PASSWORD" \
+        "TYPO3_SETUP_ADMIN_EMAIL=$ADMIN_EMAIL" \
+        "SETUP_ADMIN_USER=$ADMIN_USER" \
+        "SETUP_SITE_TITLE=$SITE_TITLE" \
+        bash -c 'vendor/bin/typo3 setup \
+            --no-interaction \
+            --driver=mysqli \
+            --host=db \
+            --port=3306 \
+            --dbname=db \
+            --username=db \
+            --password=db \
+            --admin-username="$SETUP_ADMIN_USER" \
+            --project-name="$SETUP_SITE_TITLE" \
+            --server-type=apache \
+            --force'
+fi
 echo ""
 
 echo "==>       Setting up extensions and flushing cache..."
@@ -234,8 +215,6 @@ else
     echo "    Skipped — packages/sitepackage/package.json not found."
     echo "    The sitepackage was installed from a dist archive (no SCSS build tools)."
     echo "    Pre-compiled CSS from the distribution will be used as-is."
-    echo "    To enable SCSS customisation, ensure the first composer install uses"
-    echo "    the VCS source (keep the GitLab VCS repo in composer.json until setup completes)."
 fi
 echo ""
 
@@ -244,10 +223,10 @@ echo "============================================"
 echo "  Setup complete!"
 echo "============================================"
 echo ""
-echo "  Backend: ${DDEV_URL}/typo3"
-echo "  Username: admin"
+echo "  Backend : ${DDEV_URL}/typo3"
+echo "  Username: ${ADMIN_USER}"
 echo "  Password: ${ADMIN_PASSWORD}"
-echo "  Email:    ${ADMIN_EMAIL}"
+echo "  Email   : ${ADMIN_EMAIL}"
 echo ""
 echo "  Next steps:"
 echo "  1. Commit the local sitepackage to this project's git:"

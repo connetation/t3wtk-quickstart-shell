@@ -72,7 +72,17 @@ ddev start
 ddev setup-project
 ```
 
-This command does the following in order:
+The command prompts for:
+
+| Prompt | Default | Saved to |
+|--------|---------|----------|
+| Project name | Derived from DDEV name | `config/sites/…/config.yaml` websiteTitle + TYPO3 site name |
+| DDEV subdomain | Current `name:` in `.ddev/config.yaml` | `.ddev/config.yaml`, DDEV restart if changed |
+| Admin username | `admin` | TYPO3 admin account |
+| Admin password | `Admin1234!` | TYPO3 admin account |
+| Admin email | `admin@example.com` | TYPO3 admin account |
+
+Then does the following in order:
 
 | Step | What happens |
 |------|-------------|
