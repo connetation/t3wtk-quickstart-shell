@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+## Description: Sync site config/settings YAML files from a remote environment
+## Usage: pull-config [environment]
+## Example: ddev pull-config master
+
+set -euo pipefail
+
+ENVIRONMENT="${1:-master}"
+CONFIG_FILE="$(dirname "${BASH_SOURCE[0]}")/pull-db.yaml"
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    echo "Error: $CONFIG_FILE not found. Configure your environments in .ddev/commands/host/pull-db.yaml"
+    exit 1
+fi
+
+yaml_get() {
+    local env="$1" key="$2"
+    awk -v env="$env" -v key="$key" '
+        /^  [^ ]/ { in_env = ($0 ~ "^  " env ":$") }
+        in_env { if (match($0, "^    " key ":")) { sub("^    " key ": *", ""); print; exit } }
+    ' "$CONFIG_FILE"
+}
+
+if ! awk -v env="$ENVIRONMENT" '/^  [^ ]/ { if ($0 ~ "^  " env ":$") found=1 } END { exit !found }' "$CONFIG_FILE"; then
+    AVAILABLE=$(awk '/^  [^ ]/ { gsub(/^  |:.*$/, ""); printf "%s ", $0 }' "$CONFIG_FILE")
+    echo "Error: Unknown environment '$ENVIRONMENT'. Available: $AVAILABLE" >&2
+    exit 1
+fi
+
+REMOTE_HOST=$(yaml_get "$ENVIRONMENT" "host")
+REMOTE_USER=$(yaml_get "$ENVIRONMENT" "user")
+REMOTE_PORT=$(yaml_get "$ENVIRONMENT" "port")
+REMOTE_PATH=$(yaml_get "$ENVIRONMENT" "path")
+
+REMOTE_USER="${REMOTE_USER:-root}"
+REMOTE_PORT="${REMOTE_PORT:-22}"
+
+LOCAL_DIR="$(pwd)/config/sites/sitepackage"
+REMOTE_DIR="$REMOTE_PATH/config/sites/sitepackage"
+
+echo "Syncing site config from $ENVIRONMENT ($REMOTE_USER@$REMOTE_HOST)..."
+
+rsync -az \
+    -e "ssh -p $REMOTE_PORT -o StrictHostKeyChecking=accept-new" \
+    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/config.yaml" \
+    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/settings.yaml" \
+    "$LOCAL_DIR/"
+
+echo "Synced:"
+echo "  $LOCAL_DIR/config.yaml"
+echo "  $LOCAL_DIR/settings.yaml"

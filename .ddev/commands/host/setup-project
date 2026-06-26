@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+## Description: Initialize a fresh TYPO3 project (composer install, DB setup, extension setup)
+## Usage: setup-project
+
+set -euo pipefail
+
+# Resolve project name from DDEV config for URL display
+PROJECT_NAME=$(grep "^name:" "$(pwd)/.ddev/config.yaml" | awk '{print $2}')
+DDEV_URL="https://${PROJECT_NAME}.ddev.site"
+
+echo ""
+echo "============================================"
+echo "  TYPO3 Project Setup"
+echo "  URL: ${DDEV_URL}"
+echo "============================================"
+echo ""
+
+# ── Step 1: Composer install ─────────────────────────────────────────────────
+echo "==> [1/5] Installing Composer dependencies..."
+ddev composer install
+echo "    Done."
+echo ""
+
+# ── Step 2: Create required directories ──────────────────────────────────────
+echo "==> [2/5] Creating required directories..."
+ddev exec bash -c "mkdir -p \
+    public/fileadmin/_processed_ \
+    public/fileadmin/_temp_ \
+    public/fileadmin/user_upload \
+    public/fileadmin/form_definitions \
+    var/charset \
+    var/lock \
+    var/log \
+    var/session \
+    var/transient \
+    translations"
+echo "    Done."
+echo ""
+
+# ── Step 3: TYPO3 setup ──────────────────────────────────────────────────────
+echo "==> [3/5] Initializing TYPO3 (database schema + admin user)..."
+echo "    This may take a minute..."
+ddev exec bash -c "vendor/bin/typo3 setup \
+    --no-interaction \
+    --driver=mysqli \
+    --host=db \
+    --port=3306 \
+    --dbname=db \
+    --username=db \
+    --password=db \
+    '--admin-username=admin' \
+    '--admin-user-password=Admin1234!' \
+    '--admin-email=admin@example.com' \
+    '--project-name=My TYPO3 Project' \
+    --force"
+echo "    Done."
+echo ""
+
+# ── Step 4: Extension setup ──────────────────────────────────────────────────
+echo "==> [4/5] Setting up TYPO3 extensions..."
+ddev exec vendor/bin/typo3 extension:setup
+echo "    Done."
+echo ""
+
+# ── Step 5: Cache flush ──────────────────────────────────────────────────────
+echo "==> [5/5] Flushing TYPO3 caches..."
+ddev exec vendor/bin/typo3 cache:flush
+echo "    Done."
+echo ""
+
+# ── Done ─────────────────────────────────────────────────────────────────────
+echo "============================================"
+echo "  Setup complete!"
+echo "============================================"
+echo ""
+echo "  Backend: ${DDEV_URL}/typo3"
+echo "  Username: admin"
+echo "  Password: Admin1234!"
+echo ""
+echo "  Next steps:"
+echo "  1. Log into the TYPO3 backend"
+echo "  2. Create a root page and mark it as 'Site Root'"
+echo "  3. Go to Site Management and configure your site"
+echo "  4. Build sitepackage styles:"
+echo "     ddev exec 'cd /var/www/html/packages/project_sitepackage && npm install && npm run build'"
+echo "  5. Before deploying, update:"
+echo "     - deployer/deploy.php  (server hostname, user, deploy path)"
+echo "     - .gitlab-ci.yml       (PRODUCTION_HOST, PRODUCTION_USER variables)"
+echo "     - config/sites/sitepackage/config.yaml  (production base URL)"
+echo ""

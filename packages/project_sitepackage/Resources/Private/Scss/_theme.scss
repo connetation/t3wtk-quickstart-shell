@@ -1,0 +1,47 @@
+// ════════════════════════════════════════════════════════════════
+// Project Sitepackage – Theme Override Control Panel
+// ════════════════════════════════════════════════════════════════
+//
+// All CSS custom properties from conn/base and conn/elements are
+// listed here. Uncomment any value to override the default set in
+// vendor/conn/base or vendor/conn/sitepackage.
+//
+// Load order:
+//   1. EXT:conn_base/Resources/Public/Css/main.css
+//   2. EXT:conn_sitepackage/Resources/Public/Css/main.css
+//   3. EXT:project_sitepackage/Resources/Public/Css/main.css  ← THIS FILE
+// ════════════════════════════════════════════════════════════════
+
+
+// ── A. Theme-invariant tokens ────────────────────────────────
+// :root {
+//     --conn-accent:       #6366f1;
+//     --conn-accent-hover: #4f52d4;
+//     --conn-radius:       0.75rem;
+//     --conn-transition:   0.2s ease-in-out;
+// }
+
+
+// ── B. Light mode overrides ──────────────────────────────────
+// [data-bs-theme="light"],
+// :root:not([data-bs-theme="dark"]) {
+//     --conn-bg:             #f4f5ff;
+//     --conn-surface:        #ffffff;
+//     --conn-nav-bg:         #ffffff;
+//     --conn-footer-bg:      #ffffff;
+//     --conn-border:         rgba(99, 102, 241, 0.12);
+//     --conn-text:           #1e1e3f;
+//     --conn-text-muted:     #6b7280;
+// }
+
+
+// ── C. Dark mode overrides ───────────────────────────────────
+// [data-bs-theme="dark"] {
+//     --conn-bg:             #0b0b1a;
+//     --conn-surface:        #12122a;
+//     --conn-nav-bg:         #12122a;
+//     --conn-footer-bg:      #12122a;
+//     --conn-border:         rgba(255, 255, 255, 0.08);
+//     --conn-text:           #e2e2ff;
+//     --conn-text-muted:     #8b8bcd;
+// }

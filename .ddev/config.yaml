@@ -1,0 +1,22 @@
+name: conn-project-template
+type: typo3
+docroot: public
+php_version: "8.3"
+webserver_type: apache-fpm
+xdebug_enabled: false
+additional_hostnames: []
+additional_fqdns: []
+database:
+    type: mariadb
+    version: "10.11"
+use_dns_when_possible: true
+composer_version: "2"
+web_environment:
+    - TYPO3_CONTEXT=Development
+corepack_enable: false
+
+hooks:
+  post-start:
+    - exec: "cd /var/www/html/vendor/conn/base && npm install && npm run build"
+    - exec: "cd /var/www/html/vendor/conn/elements && npm install && npm run build"
+    - exec: "if [ -f /var/www/html/packages/project_sitepackage/package.json ]; then cd /var/www/html/packages/project_sitepackage && npm install && npm run build; fi"

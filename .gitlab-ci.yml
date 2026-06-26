@@ -1,0 +1,73 @@
+variables:
+  GIT_STRATEGY: clone
+  GIT_SSL_NO_VERIFY: "true"
+  PRODUCTION_PORT: 22
+  PRODUCTION_HOST: "your-server.example.com"   # TODO: update
+  PRODUCTION_USER: "your-deploy-user"           # TODO: update
+  PHP_EXECUTABLE: "/usr/bin/php8.3"
+  COMPOSER_VERSION: "2"
+
+stages:
+  - build
+  - deploy
+
+.configureSSHAgent: &configureSSHAgent |-
+  eval $(ssh-agent -s)
+  echo "$SSH_PRIVATE_KEY_PRODUCTION" | tr -d '\r' | ssh-add -
+  mkdir -p ~/.ssh
+  ssh-keyscan ${PRODUCTION_HOST} >> ~/.ssh/known_hosts
+  chmod 700 ~/.ssh
+
+build:
+  stage: build
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/composer:2
+  variables:
+    GIT_STRATEGY: "clone"
+    GIT_SUBMODULE_STRATEGY: "recursive"
+  before_script:
+    - apk add bash --no-cache
+    - apk add git --update
+    - export COMPOSER_CACHE_DIR=/cache/composer
+    - composer config store-auths false
+    - composer config --global http-basic.gitlab.com gitlab-ci-token "$CI_JOB_TOKEN"
+  script:
+    - composer install --no-interaction --optimize-autoloader --ignore-platform-reqs
+    - curl -sL https://github.com/gordalina/cachetool/releases/latest/download/cachetool.phar -o vendor/bin/cachetool && chmod +x vendor/bin/cachetool
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - vendor/
+    policy: push
+  artifacts:
+    paths:
+      - "./"
+    expire_in: 1h
+
+.deploy-template: &deploy_template
+  stage: deploy
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/composer:2
+  variables:
+    GIT_STRATEGY: "clone"
+    GIT_SUBMODULE_STRATEGY: "recursive"
+  before_script:
+    - *configureSSHAgent
+    - apk add rsync --update
+    - cd /tmp && composer require deployer/deployer:6.8.0 deployer/recipes --no-interaction --ignore-platform-reqs
+    - cd $CI_PROJECT_DIR
+  script:
+    - /tmp/vendor/bin/dep --file=./deployer/deploy.php deploy -vvv main
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - vendor/
+    policy: pull
+  dependencies:
+    - build
+
+deploy-main:
+  <<: *deploy_template
+  environment:
+    name: main
+    url: https://${PRODUCTION_HOST}
+  only:
+    - main

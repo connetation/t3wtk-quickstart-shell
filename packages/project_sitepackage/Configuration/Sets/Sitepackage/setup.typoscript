@@ -1,0 +1,29 @@
+# ─────────────────────────────────────────────
+# Project Sitepackage – Site-specific TypoScript
+# conn/sitepackage TypoScript is already loaded via
+# the Set dependency in config.yaml.
+# ─────────────────────────────────────────────
+
+# Load project stylesheet after conn_sitepackage/main.css.
+# Edit Resources/Private/Scss/_theme.scss, then rebuild
+# (npm install && npm run build) to activate overrides.
+page.includeCSS {
+    project_sitepackage = EXT:project_sitepackage/Resources/Public/Css/main.css
+    project_sitepackage.media = all
+}
+
+# Template override paths — index 20 takes priority over
+# conn_sitepackage (10) and conn_base (10).
+page.10 {
+    templateRootPaths.20 = EXT:project_sitepackage/Resources/Private/Templates/Page/
+    partialRootPaths.20  = EXT:project_sitepackage/Resources/Private/Partials/
+    layoutRootPaths.20   = EXT:project_sitepackage/Resources/Private/Layouts/
+}
+
+# Content element override paths — index 40 is checked before
+# conn_sitepackage (30), conn_elements (20), and conn_base (10).
+lib.contentElement {
+    templateRootPaths.40 = EXT:project_sitepackage/Resources/Private/Templates/
+    partialRootPaths.40  = EXT:project_sitepackage/Resources/Private/Partials/
+    layoutRootPaths.40   = EXT:project_sitepackage/Resources/Private/Layouts/
+}

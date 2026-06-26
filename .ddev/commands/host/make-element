@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+## Description: Scaffold a new content element in conn/elements
+## Usage: make-element ["Element Name"]
+## Example: ddev make-element
+## Example: ddev make-element "Hero Banner"
+
+set -euo pipefail
+
+ARGS="$*"
+if [ -n "$ARGS" ]; then
+    ddev exec bash -c "cd /var/www/html/vendor/conn/elements && node bin/make-element.mjs '$ARGS'"
+else
+    ddev exec bash -c "cd /var/www/html/vendor/conn/elements && node bin/make-element.mjs"
+fi

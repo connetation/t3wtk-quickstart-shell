@@ -1,0 +1,37 @@
+# Dependencies
+vendor/
+
+# TYPO3 generated
+var/
+public/typo3temp/
+public/_assets/
+public/_assets_install/
+
+# User uploads (manage separately or via shared storage)
+public/fileadmin/
+
+# Environment & local system config (generated per environment by DDEV/install tool)
+config/system/additional.php
+config/system/additional.ddev.php
+config/system/settings.php
+.env
+.env.*
+
+# Site config local overrides (per deployment target)
+config/sites/*/config.local.yaml
+
+
+.ddev/db_snapshots/
+/auth.json
+/.netrc
+
+# Database dumps
+db_dump/
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

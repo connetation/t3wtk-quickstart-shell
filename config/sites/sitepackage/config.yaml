@@ -1,0 +1,24 @@
+# Production base URL — update before deploying
+base: 'https://your-project.ddev.site/'
+baseVariants: []
+dependencies:
+  - project/sitepackage
+  - conn/elements
+errorHandling:
+  -
+    errorCode: 404
+    errorHandler: Page
+    errorContentSource: 't3://page?uid=2'
+languages:
+  -
+    title: English
+    enabled: true
+    languageId: 0
+    base: /
+    locale: en_US.UTF-8
+    navigationTitle: English
+    flag: gb
+    hreflang: ''
+    websiteTitle: ''
+rootPageId: 1
+websiteTitle: 'My TYPO3 Project'

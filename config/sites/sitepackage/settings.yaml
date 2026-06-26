@@ -1,0 +1,17 @@
+# ─────────────────────────────────────────────
+# Site Settings — override conn/base defaults
+# All available settings are defined in
+# vendor/conn/base/Configuration/Sets/Base/settings.definitions.yaml
+# ─────────────────────────────────────────────
+
+# Branding
+branding.logoAlt: 'My TYPO3 Project'
+
+# Footer
+footer.bar.show: true
+footer.bar.left: copyright
+footer.bar.right: navigation
+footer.layout: Minimal
+
+# Theme toggle
+themeToggle.enabled: true

@@ -1,0 +1,6 @@
+environments:
+  master:
+    host: your-server.example.com
+    user: root
+    port: 22
+    path: /path/to/typo3/current
