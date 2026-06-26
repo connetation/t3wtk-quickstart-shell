@@ -82,7 +82,7 @@ This command does the following in order:
 | 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `conn/sitepackage: @dev` |
 | 5 | `composer update conn/sitepackage` — rewires vendor symlink to `packages/sitepackage/` |
 | 6 | `typo3 setup` — creates DB schema and admin user, then `extension:setup` + `cache:flush` |
-| 7 | Builds sitepackage CSS (`npm install && npm run build`) |
+| 7 | Builds sitepackage CSS (`npm install && npm run build`) — skipped if installed from dist archive |
 
 ### 4. Commit the sitepackage
 

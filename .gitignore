@@ -28,6 +28,9 @@ config/sites/*/config.local.yaml
 # Database dumps
 db_dump/
 
+# Claude Code workspace
+.claude/
+
 # OS & IDE
 .DS_Store
 Thumbs.db
