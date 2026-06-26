@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
 ## Description: Initialize a fresh TYPO3 project (composer install, move sitepackage, DB setup)
-## Usage: setup-project
+## Usage: setup-project [--admin-password=<password>] [--admin-email=<email>]
+## Example: ddev setup-project
+## Example: ddev setup-project --admin-password=MySecurePass1! --admin-email=dev@example.com
 
 set -euo pipefail
+
+# ── Defaults ─────────────────────────────────────────────────────────────────
+ADMIN_PASSWORD="Admin1234!"
+ADMIN_EMAIL="admin@example.com"
+
+# Parse optional arguments
+for arg in "$@"; do
+    case "$arg" in
+        --admin-password=*) ADMIN_PASSWORD="${arg#*=}" ;;
+        --admin-email=*)    ADMIN_EMAIL="${arg#*=}" ;;
+    esac
+done
 
 PROJECT_NAME=$(grep "^name:" "$(pwd)/.ddev/config.yaml" | awk '{print $2}')
 DDEV_URL="https://${PROJECT_NAME}.ddev.site"
@@ -93,7 +107,7 @@ echo ""
 # ── Step 6: TYPO3 setup ──────────────────────────────────────────────────────
 echo "==> [6/7] Initializing TYPO3 (database schema + admin user)..."
 echo "    This may take a moment..."
-ddev exec bash -c "vendor/bin/typo3 setup \
+ddev exec env "TYPO3_SETUP_ADMIN_PASSWORD=$ADMIN_PASSWORD" "TYPO3_SETUP_ADMIN_EMAIL=$ADMIN_EMAIL" bash -c "vendor/bin/typo3 setup \
     --no-interaction \
     --driver=mysqli \
     --host=db \
@@ -101,9 +115,7 @@ ddev exec bash -c "vendor/bin/typo3 setup \
     --dbname=db \
     --username=db \
     --password=db \
-    '--admin-username=admin' \
-    '--admin-user-password=Admin1234!' \
-    '--admin-email=admin@example.com' \
+    --admin-username=admin \
     '--project-name=My TYPO3 Project' \
     --server-type=apache \
     --force"
@@ -128,7 +140,8 @@ echo "============================================"
 echo ""
 echo "  Backend: ${DDEV_URL}/typo3"
 echo "  Username: admin"
-echo "  Password: Admin1234!   ← change this!"
+echo "  Password: ${ADMIN_PASSWORD}"
+echo "  Email:    ${ADMIN_EMAIL}"
 echo ""
 echo "  Next steps:"
 echo "  1. Commit the local sitepackage to this project's git:"
