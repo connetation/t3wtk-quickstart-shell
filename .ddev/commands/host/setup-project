@@ -105,6 +105,7 @@ ddev exec bash -c "vendor/bin/typo3 setup \
     '--admin-user-password=Admin1234!' \
     '--admin-email=admin@example.com' \
     '--project-name=My TYPO3 Project' \
+    --server-type=apache \
     --force"
 echo ""
 
