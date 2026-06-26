@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-## Description: Initialize a fresh TYPO3 project (composer install, DB setup, extension setup)
+## Description: Initialize a fresh TYPO3 project (composer install, move sitepackage, DB setup)
 ## Usage: setup-project
 
 set -euo pipefail
 
-# Resolve project name from DDEV config for URL display
 PROJECT_NAME=$(grep "^name:" "$(pwd)/.ddev/config.yaml" | awk '{print $2}')
 DDEV_URL="https://${PROJECT_NAME}.ddev.site"
 
@@ -16,14 +15,15 @@ echo "============================================"
 echo ""
 
 # ── Step 1: Composer install ─────────────────────────────────────────────────
-echo "==> [1/5] Installing Composer dependencies..."
+echo "==> [1/7] Installing Composer dependencies..."
 ddev composer install
 echo "    Done."
 echo ""
 
 # ── Step 2: Create required directories ──────────────────────────────────────
-echo "==> [2/5] Creating required directories..."
+echo "==> [2/7] Creating required directories..."
 ddev exec bash -c "mkdir -p \
+    packages \
     public/fileadmin/_processed_ \
     public/fileadmin/_temp_ \
     public/fileadmin/user_upload \
@@ -37,9 +37,62 @@ ddev exec bash -c "mkdir -p \
 echo "    Done."
 echo ""
 
-# ── Step 3: TYPO3 setup ──────────────────────────────────────────────────────
-echo "==> [3/5] Initializing TYPO3 (database schema + admin user)..."
-echo "    This may take a minute..."
+# ── Step 3: Copy conn/sitepackage to packages/sitepackage ────────────────────
+echo "==> [3/7] Moving conn/sitepackage to packages/sitepackage/ ..."
+
+if [ -d "packages/sitepackage" ]; then
+    echo "    packages/sitepackage/ already exists — skipping copy."
+else
+    ddev exec bash -c "cp -r vendor/conn/sitepackage packages/sitepackage"
+    echo "    Copied. Removing embedded .git..."
+    ddev exec bash -c "rm -rf packages/sitepackage/.git"
+    echo "    Done."
+fi
+echo ""
+
+# ── Step 4: Update composer.json to use local path package ───────────────────
+echo "==> [4/7] Switching sitepackage to local path repository..."
+
+ddev exec php << 'PHP'
+<?php
+$root = '/var/www/html';
+
+// Add version to packages/sitepackage/composer.json so path repo resolves correctly
+$pkgJsonPath = $root . '/packages/sitepackage/composer.json';
+$pkg = json_decode(file_get_contents($pkgJsonPath), true);
+$pkg['version'] = 'dev-local';
+file_put_contents($pkgJsonPath, json_encode($pkg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+
+// Update root composer.json:
+//   - change conn/sitepackage constraint to @dev (matches dev-local from path repo)
+//   - remove the VCS gitlab repository for sitepackage (no longer needed)
+$composerJsonPath = $root . '/composer.json';
+$json = json_decode(file_get_contents($composerJsonPath), true);
+
+$json['require']['conn/sitepackage'] = '@dev';
+
+$json['repositories'] = array_values(array_filter(
+    $json['repositories'],
+    fn($r) => !($r['type'] === 'vcs' && str_contains($r['url'], 'sitepackage'))
+));
+
+file_put_contents($composerJsonPath, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+
+echo "    packages/sitepackage/composer.json → added version: dev-local\n";
+echo "    composer.json → conn/sitepackage set to @dev, VCS repo removed\n";
+PHP
+
+echo ""
+
+# ── Step 5: Update composer to use local package ─────────────────────────────
+echo "==> [5/7] Updating Composer to use packages/sitepackage/ ..."
+ddev composer update conn/sitepackage --no-interaction
+echo "    Done. vendor/conn/sitepackage → symlink to packages/sitepackage/"
+echo ""
+
+# ── Step 6: TYPO3 setup ──────────────────────────────────────────────────────
+echo "==> [6/7] Initializing TYPO3 (database schema + admin user)..."
+echo "    This may take a moment..."
 ddev exec bash -c "vendor/bin/typo3 setup \
     --no-interaction \
     --driver=mysqli \
@@ -53,18 +106,17 @@ ddev exec bash -c "vendor/bin/typo3 setup \
     '--admin-email=admin@example.com' \
     '--project-name=My TYPO3 Project' \
     --force"
-echo "    Done."
 echo ""
 
-# ── Step 4: Extension setup ──────────────────────────────────────────────────
-echo "==> [4/5] Setting up TYPO3 extensions..."
+echo "==> [6/7] Setting up extensions and flushing cache..."
 ddev exec vendor/bin/typo3 extension:setup
+ddev exec vendor/bin/typo3 cache:flush
 echo "    Done."
 echo ""
 
-# ── Step 5: Cache flush ──────────────────────────────────────────────────────
-echo "==> [5/5] Flushing TYPO3 caches..."
-ddev exec vendor/bin/typo3 cache:flush
+# ── Step 7: Build sitepackage styles ─────────────────────────────────────────
+echo "==> [7/7] Building sitepackage CSS..."
+ddev exec bash -c "cd /var/www/html/packages/sitepackage && npm install && npm run build"
 echo "    Done."
 echo ""
 
@@ -75,16 +127,21 @@ echo "============================================"
 echo ""
 echo "  Backend: ${DDEV_URL}/typo3"
 echo "  Username: admin"
-echo "  Password: Admin1234!"
+echo "  Password: Admin1234!   ← change this!"
 echo ""
 echo "  Next steps:"
-echo "  1. Log into the TYPO3 backend"
-echo "  2. Create a root page and mark it as 'Site Root'"
-echo "  3. Go to Site Management and configure your site"
-echo "  4. Build sitepackage styles:"
-echo "     ddev exec 'cd /var/www/html/packages/project_sitepackage && npm install && npm run build'"
-echo "  5. Before deploying, update:"
-echo "     - deployer/deploy.php  (server hostname, user, deploy path)"
-echo "     - .gitlab-ci.yml       (PRODUCTION_HOST, PRODUCTION_USER variables)"
-echo "     - config/sites/sitepackage/config.yaml  (production base URL)"
+echo "  1. Commit the local sitepackage to this project's git:"
+echo "       git add packages/sitepackage/ composer.json composer.lock"
+echo "       git commit -m 'Initialize sitepackage'"
+echo ""
+echo "  2. Log into TYPO3 backend, create a root page,"
+echo "     mark it as 'Site Root', then configure in Site Management"
+echo ""
+echo "  3. Customize packages/sitepackage/ to your needs,"
+echo "     rebuild CSS with: ddev exec 'cd /var/www/html/packages/sitepackage && npm run build'"
+echo ""
+echo "  4. Before deploying, update:"
+echo "       deployer/deploy.php        (server hostname, user, path)"
+echo "       .gitlab-ci.yml             (PRODUCTION_HOST, PRODUCTION_USER)"
+echo "       config/sites/sitepackage/config.yaml  (production base URL)"
 echo ""

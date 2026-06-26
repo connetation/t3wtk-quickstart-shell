@@ -1,5 +1,0 @@
-name: project/sitepackage
-label: 'Project Sitepackage'
-dependencies:
-  - conn/sitepackage
-hidden: true

@@ -19,4 +19,4 @@ hooks:
   post-start:
     - exec: "cd /var/www/html/vendor/conn/base && npm install && npm run build"
     - exec: "cd /var/www/html/vendor/conn/elements && npm install && npm run build"
-    - exec: "if [ -f /var/www/html/packages/project_sitepackage/package.json ]; then cd /var/www/html/packages/project_sitepackage && npm install && npm run build; fi"
+    - exec: "if [ -d /var/www/html/packages/sitepackage ]; then cd /var/www/html/packages/sitepackage && npm install && npm run build; fi"

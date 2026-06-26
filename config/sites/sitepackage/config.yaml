@@ -1,8 +1,9 @@
-# Production base URL — update before deploying
+# Update base URL: for DDEV use https://<project-name>.ddev.site/
+# For production set the real domain below
 base: 'https://your-project.ddev.site/'
 baseVariants: []
 dependencies:
-  - project/sitepackage
+  - conn/sitepackage
   - conn/elements
 errorHandling:
   -

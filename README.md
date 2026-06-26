@@ -1,6 +1,6 @@
 # TYPO3 14 Project Template
 
-A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) base packages.
+A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) base packages (`conn/base`, `conn/elements`, `conn/sitepackage`).
 
 ## Stack
 
@@ -16,24 +16,28 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 
 ```
 .
-├── .ddev/                        DDEV configuration + custom commands
+├── .ddev/
+│   ├── config.yaml                   DDEV settings (change name: per project)
 │   └── commands/host/
-│       ├── setup-project         Fresh TYPO3 install
-│       ├── make-element          Scaffold content elements
-│       ├── pull-db               Download DB from remote
-│       └── pull-config           Sync site config from remote
+│       ├── setup-project             Fresh TYPO3 install (run once after clone)
+│       ├── make-element              Scaffold new content elements
+│       ├── pull-db                   Download DB dump from remote
+│       ├── pull-config               Sync site config from remote
+│       └── pull-db.yaml             Remote server config (fill in after deploy)
 ├── config/
-│   ├── sites/sitepackage/        Site configuration
-│   │   ├── config.yaml           Routes, languages, dependencies
-│   │   └── settings.yaml         Theme, footer, branding settings
-│   └── system/                   DB credentials (gitignored)
-├── deployer/deploy.php           Deployer config (update server credentials)
-├── packages/
-│   └── project_sitepackage/      Project-specific TYPO3 extension
-│       ├── Configuration/Sets/   Site set (depends on conn/sitepackage)
-│       ├── Resources/Private/Scss/ Theme overrides
-│       └── Resources/Public/Css/  Compiled CSS
-├── public/                       TYPO3 web root (docroot)
+│   ├── sites/sitepackage/
+│   │   ├── config.yaml               Site config (URL, languages, set dependencies)
+│   │   └── settings.yaml             Theme, footer, branding overrides
+│   └── system/                       DB credentials (gitignored, auto-generated)
+├── deployer/deploy.php               Deployer rsync config (fill in server details)
+├── packages/                         Created by ddev setup-project
+│   └── sitepackage/                  conn/sitepackage copied here, .git removed
+│                                     Tracked by this project's git — customize freely
+├── public/                           TYPO3 web root
+│   ├── index.php
+│   └── .htaccess
+├── translations/                     Translation override files
+├── .gitlab-ci.yml                    CI/CD pipeline (fill in server variables)
 └── composer.json
 ```
 
@@ -42,10 +46,18 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 ### 1. Clone and rename
 
 ```bash
-git clone <this-repo> my-project
-cd my-project
-# Update .ddev/config.yaml: change `name:` to your project name
-# Update composer.json: change `name:` to your vendor/project
+git clone <this-repo> my-project.com
+cd my-project.com
+```
+
+Edit `.ddev/config.yaml` — change the `name:` to match your project:
+```yaml
+name: my-project
+```
+
+Edit `composer.json` — change the project name:
+```json
+"name": "my-vendor/my-project"
 ```
 
 ### 2. Start DDEV
@@ -54,66 +66,78 @@ cd my-project
 ddev start
 ```
 
-### 3. Run setup
+### 3. Run setup (once)
 
 ```bash
 ddev setup-project
 ```
 
-This installs Composer dependencies, creates the TYPO3 database schema and admin user.
+This command does the following in order:
 
-### 4. First login
+| Step | What happens |
+|------|-------------|
+| 1 | `composer install` — installs all dependencies including `conn/sitepackage` from VCS |
+| 2 | Creates `public/fileadmin/`, `var/`, `translations/` directories |
+| 3 | Copies `vendor/conn/sitepackage/` → `packages/sitepackage/`, removes `.git` |
+| 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `conn/sitepackage: @dev` |
+| 5 | `composer update conn/sitepackage` — rewires vendor symlink to `packages/sitepackage/` |
+| 6 | `typo3 setup` — creates DB schema and admin user, then `extension:setup` + `cache:flush` |
+| 7 | Builds sitepackage CSS (`npm install && npm run build`) |
+
+### 4. Commit the sitepackage
+
+After setup-project, commit the local sitepackage to this project's git:
+
+```bash
+git add packages/sitepackage/ composer.json composer.lock
+git commit -m "Initialize sitepackage from conn/sitepackage"
+```
+
+From this point on, `packages/sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `conn/sitepackage` VCS remains.
+
+### 5. First login and root page
 
 Open `https://<project-name>.ddev.site/typo3`
 
 - Username: `admin`
-- Password: `Admin1234!` ← **Change this immediately**
-
-### 5. Create root page
+- Password: `Admin1234!` ← **change this immediately**
 
 In the TYPO3 backend:
 1. Create a page titled "Home"
 2. In page properties → Behaviour → tick **"Use as Root Page"**
-3. Go to **Site Management** and verify the site config is linked
-
-### 6. Build sitepackage styles
-
-```bash
-ddev exec "cd /var/www/html/packages/project_sitepackage && npm install && npm run build"
-```
-
-Or during active development with watch:
-```bash
-ddev exec "cd /var/www/html/packages/project_sitepackage && npm run dev"
-```
+3. Go to **Site Management** → verify the site config is linked to your root page
 
 ## Customisation
 
-### Rename the sitepackage
+### Sitepackage
 
-The local extension lives in `packages/project_sitepackage/`. To rename it:
+The sitepackage at `packages/sitepackage/` is a full copy of `conn/sitepackage`, freely editable:
 
-1. Rename the directory: `mv packages/project_sitepackage packages/my_sitepackage`
-2. Update `packages/my_sitepackage/composer.json` → `name` and `extra.typo3/cms.extension-key`
-3. Update `packages/my_sitepackage/ext_emconf.php` → title / author
-4. Update `packages/my_sitepackage/Configuration/Sets/Sitepackage/setup.typoscript` → replace `project_sitepackage` with `my_sitepackage`
-5. Update `config/sites/sitepackage/config.yaml` → `dependencies` if you renamed the set
-6. Run `ddev composer update`
+- **CSS theme overrides**: edit `Resources/Private/Scss/_theme.scss`, then:
+  ```bash
+  ddev exec "cd /var/www/html/packages/sitepackage && npm run build"
+  ```
+  Or watch during development:
+  ```bash
+  ddev exec "cd /var/www/html/packages/sitepackage && npm run dev"
+  ```
 
-### Theme settings
+- **Fluid template overrides**: place templates in `Resources/Private/Templates/Page/`, `Partials/`, or `Layouts/` to override `conn_base` equivalents
 
-Edit `config/sites/sitepackage/settings.yaml` to configure navbar style, footer layout, social links, branding, etc.
+- **TypoScript**: edit `Configuration/Sets/Base/setup.typoscript`
 
-All available settings with descriptions are in:
+- **TCA overrides**: `Configuration/TCA/Overrides/`
+
+### Site settings
+
+Edit `config/sites/sitepackage/settings.yaml` to configure navbar style, footer layout, social links, branding, colours, etc.
+
+All available settings with descriptions are documented in:
 `vendor/conn/base/Configuration/Sets/Base/settings.definitions.yaml`
-
-### SCSS theme overrides
-
-Edit `packages/project_sitepackage/Resources/Private/Scss/_theme.scss` to override CSS custom properties.
 
 ## Deployment
 
-### 1. Configure server
+### 1. Configure server credentials
 
 Edit `deployer/deploy.php`:
 ```php
@@ -124,19 +148,17 @@ host('main')
     ->set('socket', '/var/run/php/php8.3-fpm.sock');
 ```
 
-### 2. Configure GitLab CI
-
-Update `.gitlab-ci.yml` variables:
+Edit `.gitlab-ci.yml` variables:
 ```yaml
 PRODUCTION_HOST: "your-server.example.com"
 PRODUCTION_USER: "your-deploy-user"
 ```
 
-Add `SSH_PRIVATE_KEY_PRODUCTION` to your GitLab CI/CD variables (project → Settings → CI/CD → Variables).
+Add `SSH_PRIVATE_KEY_PRODUCTION` to GitLab CI/CD variables (project → Settings → CI/CD → Variables).
 
-### 3. Production TYPO3 config
+### 2. Production `config/system/additional.php`
 
-On the production server create `config/system/additional.php` (this is a deployer shared file):
+On the server, create this deployer shared file:
 ```php
 <?php
 $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] = [
@@ -148,25 +170,28 @@ $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] = [
     'password' => 'your_password',
     'charset'  => 'utf8mb4',
 ];
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = 'your-64-char-encryption-key';
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = 'your-64-char-key';
+```
+
+### 3. Production `config/sites/sitepackage/config.local.yaml`
+
+Also a deployer shared file — override the base URL for production:
+```yaml
+base: 'https://your-domain.com/'
 ```
 
 ## Pull from remote
 
-Once `pull-db.yaml` is configured with your server details:
+Configure `.ddev/commands/host/pull-db.yaml` with your server details, then:
 
 ```bash
-# Pull database
 ddev pull-db master
 ddev import-db --file=db_dump/master_YYYYMMDD_HHMM.sql.gz
 
-# Pull site config
 ddev pull-config master
 ```
 
 ## Content elements
-
-Scaffold a new content element (requires `conn/elements`):
 
 ```bash
 ddev make-element

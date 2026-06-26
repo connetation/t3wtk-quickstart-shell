@@ -3,6 +3,8 @@
     "description": "TYPO3 14 project built on Connetation base packages",
     "license": "GPL-2.0-or-later",
     "type": "project",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "allow-plugins": {
             "typo3/class-alias-loader": true,
@@ -17,7 +19,6 @@
         "sort-packages": true
     },
     "require": {
-        "project/sitepackage": "@dev",
         "b13/container": "^3.2",
         "conn/base": "^1.0.0",
         "conn/elements": "^1.0.0",
