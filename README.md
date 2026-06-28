@@ -29,7 +29,9 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 │   │   ├── config.yaml               Site config (URL, languages, set dependencies)
 │   │   └── settings.yaml             Theme, footer, branding overrides
 │   └── system/                       DB credentials (gitignored, auto-generated)
-├── deployer/deploy.php               Deployer rsync config (fill in server details)
+├── deployer/
+│   ├── deploy.php                    Deployer rsync tasks and shared-file config
+│   └── hosts.yaml                    Server credentials (hostname, user, path, socket)
 ├── packages/                         Created by ddev setup-project
 │   └── sitepackage/                  conn/sitepackage copied here, .git removed
 │                                     Tracked by this project's git — customize freely
@@ -149,13 +151,18 @@ All available settings with descriptions are documented in:
 
 ### 1. Configure server credentials
 
-Edit `deployer/deploy.php`:
-```php
-host('main')
-    ->hostname('your-server.example.com')
-    ->user('your-deploy-user')
-    ->set('deploy_path', '/path/to/deploy')
-    ->set('socket', '/var/run/php/php8.3-fpm.sock');
+Edit `deployer/hosts.yaml`:
+```yaml
+hosts:
+  main:
+    hostname: your-server.example.com
+    user: your-deploy-user
+    port: 22
+    deploy_path: /path/to/deploy
+    writable_mode: chmod
+    forward_agent: true
+    keep_releases: 2
+    socket: /var/run/php/php8.3-fpm.sock
 ```
 
 Edit `.gitlab-ci.yml` variables:
