@@ -1,0 +1,10 @@
+hosts:
+  main:
+    hostname: your-server.example.com
+    user: your-deploy-user
+    port: 22
+    deploy_path: /path/to/deploy
+    writable_mode: chmod
+    forward_agent: true
+    keep_releases: 2
+    socket: /var/run/php/php8.3-fpm.sock

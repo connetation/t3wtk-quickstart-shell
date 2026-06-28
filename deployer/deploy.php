@@ -97,16 +97,7 @@ set('rsync', [
 
 set('rsync_src', './');
 
-// TODO: Replace with your actual server credentials
-host('main')
-    ->hostname('your-server.example.com')   // <── server hostname or IP
-    ->user('your-deploy-user')              // <── SSH user
-    ->port(22)
-    ->set('deploy_path', '/path/to/deploy') // <── absolute path on server
-    ->set('writable_mode', 'chmod')
-    ->set('forward_agent', true)
-    ->set('keep_releases', 2)
-    ->set('socket', '/var/run/php/php8.3-fpm.sock'); // <── PHP-FPM socket path
+import(__DIR__ . '/hosts.yaml');
 
 set('php', '/usr/bin/php8.3');
 set('bin_folder', 'vendor/bin/');
