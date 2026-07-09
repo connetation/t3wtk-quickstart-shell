@@ -91,7 +91,7 @@ Then does the following in order:
 | 1 | `composer install` — installs all dependencies including `conn/sitepackage` from VCS |
 | 2 | Creates `public/fileadmin/`, `var/`, `translations/` directories |
 | 3 | Copies `vendor/conn/sitepackage/` → `packages/sitepackage/`, removes `.git` |
-| 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `conn/sitepackage: @dev` |
+| 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `conn/sitepackage: dev-local` |
 | 5 | `composer update conn/sitepackage` — rewires vendor symlink to `packages/sitepackage/` |
 | 6 | `typo3 setup` — creates DB schema and admin user, then `extension:setup` + `cache:flush` |
 | 7 | Builds sitepackage CSS (`npm install && npm run build`) — skipped if installed from dist archive |
