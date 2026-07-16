@@ -2,9 +2,9 @@ variables:
   GIT_STRATEGY: clone
   GIT_SSL_NO_VERIFY: "true"
   PRODUCTION_PORT: 22
-  PRODUCTION_HOST: "your-server.example.com"   # TODO: update
-  PRODUCTION_USER: "your-deploy-user"           # TODO: update
-  PHP_EXECUTABLE: "/usr/bin/php8.3"
+  PRODUCTION_HOST: "hostname" 
+  PRODUCTION_USER: "ssh_user"          
+  PHP_EXECUTABLE: "/usr/bin/php8.2"
   COMPOSER_VERSION: "2"
 
 stages:

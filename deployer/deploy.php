@@ -7,6 +7,7 @@ require_once '/tmp/vendor/deployer/recipes/recipe/rsync.php';
 
 $sharedDirectories = [
     'public/fileadmin',
+    'public/typo3temp',
     'var/charset',
     'var/lock',
     'var/log',
@@ -97,7 +98,7 @@ set('rsync', [
 
 set('rsync_src', './');
 
-import(__DIR__ . '/hosts.yaml');
+inventory(__DIR__ . '/hosts.yaml');
 
 set('php', '/usr/bin/php8.3');
 set('bin_folder', 'vendor/bin/');
