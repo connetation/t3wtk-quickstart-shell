@@ -56,13 +56,13 @@ fi
 PROJECT_NAME="$INPUT_DDEV_NAME"
 
 # ── Step 1: Composer install ─────────────────────────────────────────────────
-echo "==> [1/7] Installing Composer dependencies..."
+echo "==> [1/8] Installing Composer dependencies..."
 ddev composer install
 echo "    Done."
 echo ""
 
 # ── Step 2: Create required directories and patch site config ─────────────────
-echo "==> [2/7] Creating required directories..."
+echo "==> [2/8] Creating required directories..."
 ddev exec bash -c "mkdir -p \
     packages \
     public/fileadmin/_processed_ \
@@ -94,7 +94,7 @@ PHP
 echo ""
 
 # ── Step 3: Copy conn/sitepackage to packages/sitepackage ────────────────────
-echo "==> [3/7] Moving conn/sitepackage to packages/sitepackage/ ..."
+echo "==> [3/8] Moving conn/sitepackage to packages/sitepackage/ ..."
 
 if [ -d "packages/sitepackage" ]; then
     echo "    packages/sitepackage/ already exists — skipping copy."
@@ -107,7 +107,7 @@ fi
 echo ""
 
 # ── Step 4: Update composer.json to use local path package ───────────────────
-echo "==> [4/7] Switching sitepackage to local path repository..."
+echo "==> [4/8] Switching sitepackage to local path repository..."
 
 ddev exec php << 'PHP'
 <?php
@@ -134,13 +134,13 @@ PHP
 echo ""
 
 # ── Step 5: Rewire composer to use packages/sitepackage ──────────────────────
-echo "==> [5/7] Updating Composer to use packages/sitepackage/ ..."
+echo "==> [5/8] Updating Composer to use packages/sitepackage/ ..."
 ddev composer update conn/sitepackage --no-interaction
 echo "    Done. vendor/conn/sitepackage → symlink to packages/sitepackage/"
 echo ""
 
 # ── Step 6: TYPO3 setup ──────────────────────────────────────────────────────
-echo "==> [6/7] Initializing TYPO3 (database schema + admin user)..."
+echo "==> [6/8] Initializing TYPO3 (database schema + admin user)..."
 
 SKIP_TYPO3_SETUP=false
 
@@ -204,7 +204,7 @@ echo "    Done."
 echo ""
 
 # ── Step 7: Build sitepackage styles (only when SCSS sources are present) ────
-echo "==> [7/7] Building sitepackage CSS..."
+echo "==> [7/8] Building sitepackage CSS..."
 if ddev exec bash -c "test -f /var/www/html/packages/sitepackage/package.json"; then
     ddev exec bash -c "cd /var/www/html/packages/sitepackage && npm install && npm run build"
     echo "    Done."
@@ -213,6 +213,13 @@ else
     echo "    The sitepackage was installed from a dist archive (no SCSS build tools)."
     echo "    Pre-compiled CSS from the distribution will be used as-is."
 fi
+echo ""
+
+# ── Step 8: Reset git history — start this project from a clean slate ────────
+echo "==> [8/8] Resetting git history for a fresh project..."
+rm -rf .git
+git init -q
+echo "    Done. Template history removed, empty repository initialized."
 echo ""
 
 # ── Done ─────────────────────────────────────────────────────────────────────
@@ -226,9 +233,9 @@ echo "  Password: ${ADMIN_PASSWORD}"
 echo "  Email   : ${ADMIN_EMAIL}"
 echo ""
 echo "  Next steps:"
-echo "  1. Commit the local sitepackage to this project's git:"
-echo "       git add packages/sitepackage/ composer.json composer.lock"
-echo "       git commit -m 'Initialize sitepackage'"
+echo "  1. Commit the project as your initial commit:"
+echo "       git add -A"
+echo "       git commit -m 'Initial commit'"
 echo ""
 echo "  2. Log into TYPO3 backend, create a root page,"
 echo "     mark it as 'Site Root', then configure in Site Management"

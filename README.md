@@ -95,14 +95,15 @@ Then does the following in order:
 | 5 | `composer update conn/sitepackage` — rewires vendor symlink to `packages/sitepackage/` |
 | 6 | `typo3 setup` — creates DB schema and admin user, then `extension:setup` + `cache:flush` |
 | 7 | Builds sitepackage CSS (`npm install && npm run build`) — skipped if installed from dist archive |
+| 8 | Removes the template's `.git` history and runs `git init` — your project starts from a clean slate |
 
-### 4. Commit the sitepackage
+### 4. Create your initial commit
 
-After setup-project, commit the local sitepackage to this project's git:
+setup-project wipes the template's `.git` history and reinitializes an empty repository, so nothing is committed yet. Make your first commit for the project:
 
 ```bash
-git add packages/sitepackage/ composer.json composer.lock
-git commit -m "Initialize sitepackage from conn/sitepackage"
+git add -A
+git commit -m "Initial commit"
 ```
 
 From this point on, `packages/sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `conn/sitepackage` VCS remains.
