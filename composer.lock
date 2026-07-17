@@ -406,11 +406,11 @@
         },
         {
             "name": "conn/base",
-            "version": "1.5.5",
+            "version": "1.5.8",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/base.git",
-                "reference": "104e84ffddeea30ebcae52ef3ea86696d3b53b5e"
+                "reference": "5381210caee7af06ce8d1c50c44f1a34d3dd0b47"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -437,11 +437,11 @@
         },
         {
             "name": "conn/elements",
-            "version": "1.7.3",
+            "version": "1.7.7",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/elements.git",
-                "reference": "34bfb3686fdbd651f75fc31ca7abb84d2c3547ad"
+                "reference": "120dc6c6eea6d86999590242b11ce82683b7e100"
             },
             "require": {
                 "b13/container": "^3.2",
