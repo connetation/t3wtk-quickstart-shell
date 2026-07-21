@@ -406,11 +406,11 @@
         },
         {
             "name": "conn/base",
-            "version": "1.5.12",
+            "version": "1.5.13",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/base.git",
-                "reference": "7a7111d7e6f1387ce07eb260142ff7e3b75eb281"
+                "reference": "721fbf6e631110c7d8c11dc16dbd02df88690df0"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
