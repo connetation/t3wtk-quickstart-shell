@@ -20,6 +20,11 @@ config/system/settings.php
 # Site config local overrides (per deployment target)
 config/sites/*/config.local.yaml
 
+# Site settings — deploy-persisted "shared" file (see deployer/deploy.php),
+# so backend/editor changes on the server survive deploys instead of being
+# overwritten by whatever's committed here.
+config/sites/sitepackage/settings.yaml
+
 
 .ddev/db_snapshots/
 /auth.json

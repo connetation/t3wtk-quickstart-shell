@@ -54,7 +54,7 @@ foreach (['settings.php', 'additional.php'] as $file) {
         }
     }
 }
-if (empty($c['DB']['Connections']['Default']['user']) && !empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['user'])) {
+if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['user'])) {
     $c = array_replace_recursive($c, ['DB' => $GLOBALS['TYPO3_CONF_VARS']['DB']]);
 }
 if (empty($c['DB']['Connections']['Default'])) {

@@ -20,6 +20,7 @@ set('shared_dirs', $sharedDirectories);
 $sharedFiles = [
     'config/system/additional.php',
     'config/sites/sitepackage/config.local.yaml',
+    'config/sites/sitepackage/settings.yaml',
 ];
 set('shared_files', $sharedFiles);
 
