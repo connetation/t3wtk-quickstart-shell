@@ -493,11 +493,11 @@
         },
         {
             "name": "conn/base",
-            "version": "1.5.13",
+            "version": "1.6.3",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/base.git",
-                "reference": "721fbf6e631110c7d8c11dc16dbd02df88690df0"
+                "reference": "b4d32245db7b9119c584c71b16e861d8eb9e6c67"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -524,11 +524,11 @@
         },
         {
             "name": "conn/elements",
-            "version": "1.7.10",
+            "version": "1.7.12",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/elements.git",
-                "reference": "6f6c51815b03f60f5f4fd25873d2f45b73450108"
+                "reference": "a680130590236595d459edfce1fbaf5b9dd9accf"
             },
             "require": {
                 "b13/container": "^3.2",
@@ -555,16 +555,16 @@
         },
         {
             "name": "conn/sitepackage",
-            "version": "1.6.3",
+            "version": "1.6.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:connetation/connetation/sitepackage.git",
-                "reference": "f920daec9ed9d3f365a8764860fcb0acab6450d6"
+                "reference": "43a0b627310eff21c90950e2f638269f6349c7f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=f920daec9ed9d3f365a8764860fcb0acab6450d6",
-                "reference": "f920daec9ed9d3f365a8764860fcb0acab6450d6",
+                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=43a0b627310eff21c90950e2f638269f6349c7f7",
+                "reference": "43a0b627310eff21c90950e2f638269f6349c7f7",
                 "shasum": ""
             },
             "require": {
@@ -591,10 +591,10 @@
             ],
             "description": "Connetation Sitepackage – site-specific extension built on conn/base for TYPO3 LTS 14",
             "support": {
-                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.6.3",
+                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.6.4",
                 "issues": "https://gitlab.com/connetation/connetation/sitepackage/-/issues"
             },
-            "time": "2026-07-22T10:02:32+02:00"
+            "time": "2026-07-23T09:09:50+02:00"
         },
         {
             "name": "dasprid/enum",
