@@ -27,6 +27,7 @@ config/sites/sitepackage/settings.yaml
 
 
 .ddev/db_snapshots/
+.ddev/traefik/
 /auth.json
 /.netrc
 

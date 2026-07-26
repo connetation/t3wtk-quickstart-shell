@@ -5,12 +5,19 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 ## Stack
 
 - TYPO3 14 LTS
-- PHP 8.3
-- MariaDB 10.11
+- PHP 8.3+
+- MariaDB 10.11+
 - Bootstrap 5 (via `conn/base`)
 - Light/dark theme toggle
 - DDEV for local development
 - Deployer + GitLab CI/CD for deployment
+
+## Documentation
+
+- [Create a new content element](docs/create-new-element.md) — running `ddev make-element`, what gets generated, required post-scaffold steps
+- [Overwrite / extend conn/elements](docs/extend-elements.md)
+- [Overwrite / extend conn/news](docs/extend-news.md)
+- [Overwrite / extend conn/events](docs/extend-events.md)
 
 ## Project structure
 
@@ -209,6 +216,22 @@ ddev import-db --file=db_dump/master_YYYYMMDD_HHMM.sql.gz
 ddev pull-config master
 ```
 
+`pull-db` supports two environment types in `pull-db.yaml`:
+
+- **Classic** (default, no `type:` needed) — SSHes in, reads DB credentials from the server's `config/system/settings.php`/`additional.php`, and runs `mysqldump` there.
+- **Docker** (`type: docker`) — for servers where the app runs via Docker Compose and the DB has no port published on the host. SSHes in and runs `mariadb-dump` *inside* the `db` container via `docker compose exec`, using the container's own `MARIADB_USER`/`MARIADB_PASSWORD` env vars instead of a local TYPO3 config. Configure per environment:
+  ```yaml
+  environments:
+    production:
+      type: docker
+      host: your-server.example.com
+      user: docker-user
+      port: 22
+      path: /opt/project           # directory containing the compose file
+      compose_file: compose.prod.yaml   # optional, defaults to compose.prod.yaml
+      service: db                       # optional, defaults to db
+  ```
+
 ## Content elements
 
 ```bash
@@ -216,3 +239,5 @@ ddev make-element
 # or
 ddev make-element "Hero Banner"
 ```
+
+See [docs/create-new-element.md](docs/create-new-element.md) for prerequisites, prompts, generated files, and required post-scaffold steps.
