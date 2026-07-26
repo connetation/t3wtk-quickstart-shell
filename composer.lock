@@ -524,11 +524,11 @@
         },
         {
             "name": "conn/elements",
-            "version": "1.7.17",
+            "version": "1.7.18",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/elements.git",
-                "reference": "8ce4b337aa6fc8934a4af5c8bd2b5f7044db323b"
+                "reference": "d19b111c2ebecdfa484663c2f89f02a8d4e5a3d4"
             },
             "require": {
                 "b13/container": "^3.2",
