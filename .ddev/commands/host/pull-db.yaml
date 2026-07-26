@@ -4,3 +4,11 @@ environments:
     user: root
     port: 22
     path: /path/to/typo3/current
+  docker-example:
+    type: docker
+    host: IP_ADDRESS
+    user: docker-user
+    port: 22
+    path: /opt/project
+    compose_file: compose.prod.yaml
+    service: db

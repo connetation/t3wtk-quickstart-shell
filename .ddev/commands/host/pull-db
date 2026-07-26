@@ -9,7 +9,7 @@ ENVIRONMENT="${1:-master}"
 CONFIG_FILE="$(dirname "${BASH_SOURCE[0]}")/pull-db.yaml"
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
-    echo "Error: $CONFIG_FILE not found. Configure your environments in .ddev/commands/host/pull-db.yaml"
+    echo "Error: $CONFIG_FILE not found"
     exit 1
 fi
 
@@ -31,16 +31,35 @@ REMOTE_HOST=$(yaml_get "$ENVIRONMENT" "host")
 REMOTE_USER=$(yaml_get "$ENVIRONMENT" "user")
 REMOTE_PORT=$(yaml_get "$ENVIRONMENT" "port")
 REMOTE_PATH=$(yaml_get "$ENVIRONMENT" "path")
+REMOTE_TYPE=$(yaml_get "$ENVIRONMENT" "type")
 
 REMOTE_USER="${REMOTE_USER:-root}"
 REMOTE_PORT="${REMOTE_PORT:-22}"
+REMOTE_TYPE="${REMOTE_TYPE:-classic}"
 
 mkdir -p "$(pwd)/db_dump"
 OUTFILE="$(pwd)/db_dump/${ENVIRONMENT}_$(date +%Y%m%d_%H%M).sql.gz"
 
 echo "Downloading database from $ENVIRONMENT ($REMOTE_USER@$REMOTE_HOST)..."
 
-ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=accept-new "$REMOTE_USER@$REMOTE_HOST" "php8.2 /dev/stdin '$REMOTE_PATH'" << 'PHPEOF' > "$OUTFILE"
+if [[ "$REMOTE_TYPE" == "docker" ]]; then
+    # Docker Compose deployment (see compose.prod.yaml): the DB has no port
+    # published on the host, and credentials only exist as env vars inside the
+    # running containers (.env.docker is never rsynced to the host as-is by
+    # the actual file, and is gitignored). So run mariadb-dump *inside* the db
+    # container, where MARIADB_USER/MARIADB_PASSWORD/MARIADB_DATABASE are
+    # already set by `env_file: .env.docker`, instead of trying to read them
+    # from a settings.php that doesn't exist on a docker host.
+    COMPOSE_FILE=$(yaml_get "$ENVIRONMENT" "compose_file")
+    SERVICE=$(yaml_get "$ENVIRONMENT" "service")
+    COMPOSE_FILE="${COMPOSE_FILE:-compose.prod.yaml}"
+    SERVICE="${SERVICE:-db}"
+
+    REMOTE_CMD="cd '$REMOTE_PATH' && docker compose -f '$COMPOSE_FILE' exec -T '$SERVICE' sh -c 'exec mariadb-dump --single-transaction --default-character-set=utf8mb4 -u\"\$MARIADB_USER\" -p\"\$MARIADB_PASSWORD\" \"\$MARIADB_DATABASE\"'"
+
+    ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=accept-new "$REMOTE_USER@$REMOTE_HOST" "$REMOTE_CMD" | gzip > "$OUTFILE"
+else
+    ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=accept-new "$REMOTE_USER@$REMOTE_HOST" "php8.2 /dev/stdin '$REMOTE_PATH'" << 'PHPEOF' > "$OUTFILE"
 <?php
 $settingsPath = $argv[1] . '/config/system';
 $GLOBALS['TYPO3_CONF_VARS'] = [];
@@ -54,7 +73,7 @@ foreach (['settings.php', 'additional.php'] as $file) {
         }
     }
 }
-if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['user'])) {
+if (empty($c['DB']['Connections']['Default']['user']) && !empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['user'])) {
     $c = array_replace_recursive($c, ['DB' => $GLOBALS['TYPO3_CONF_VARS']['DB']]);
 }
 if (empty($c['DB']['Connections']['Default'])) {
@@ -72,6 +91,7 @@ $cmd = sprintf(
 );
 passthru($cmd);
 PHPEOF
+fi
 
 echo "Saved to: $OUTFILE"
 echo "Import with: ddev import-db --file=$OUTFILE"
