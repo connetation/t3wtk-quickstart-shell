@@ -23,3 +23,9 @@ languages:
     websiteTitle: ''
 rootPageId: 1
 websiteTitle: 'My TYPO3 Project'
+#if neede add events/news RouteEnhancer, add events/news directory ID in .yaml
+# imports:
+  # -
+  #   resource: ./news.yaml
+  # - 
+  #   resource: ./events.yaml

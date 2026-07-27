@@ -555,16 +555,16 @@
         },
         {
             "name": "conn/sitepackage",
-            "version": "1.6.4",
+            "version": "1.6.5",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:connetation/connetation/sitepackage.git",
-                "reference": "43a0b627310eff21c90950e2f638269f6349c7f7"
+                "reference": "b853a1fe340f4890eef4668c1e14503a18428523"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=43a0b627310eff21c90950e2f638269f6349c7f7",
-                "reference": "43a0b627310eff21c90950e2f638269f6349c7f7",
+                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=b853a1fe340f4890eef4668c1e14503a18428523",
+                "reference": "b853a1fe340f4890eef4668c1e14503a18428523",
                 "shasum": ""
             },
             "require": {
@@ -573,7 +573,10 @@
                 "typo3/cms-core": "^14.0"
             },
             "suggest": {
-                "conn/elements": "Optional content-element library (sliders, cards, dashboard, …) on top of conn/base"
+                "clickstorm/cs-seo": "Extends pages/news/event records with SEO properties, see Configuration/CsSeo",
+                "conn/elements": "Optional content-element library (sliders, cards, dashboard, …) on top of conn/base",
+                "derhansen/sf_event_mgt": "Enables the cs_seo integration in Configuration/CsSeo/events.yaml",
+                "georgringer/news": "Enables the cs_seo integration in Configuration/CsSeo/news.yaml"
             },
             "type": "typo3-cms-extension",
             "extra": {
@@ -591,10 +594,10 @@
             ],
             "description": "Connetation Sitepackage – site-specific extension built on conn/base for TYPO3 LTS 14",
             "support": {
-                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.6.4",
+                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.6.5",
                 "issues": "https://gitlab.com/connetation/connetation/sitepackage/-/issues"
             },
-            "time": "2026-07-23T09:09:50+02:00"
+            "time": "2026-07-27T10:54:28+02:00"
         },
         {
             "name": "dasprid/enum",

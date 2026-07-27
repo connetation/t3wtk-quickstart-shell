@@ -1,0 +1,18 @@
+routeEnhancers:
+  EventDetail:
+    type: Extbase
+    limitToPages:
+      - <detail-page-id> # add the page ID of the event detail page here
+    extension: SfEventMgt
+    plugin: Pieventdetail
+    routes:
+      -
+        routePath: '/{event-title}'
+        _controller: 'Event::detail'
+        _arguments:
+          event-title: event
+    aspects:
+      event-title:
+        type: PersistedAliasMapper
+        tableName: tx_sfeventmgt_domain_model_event
+        routeFieldName: slug
