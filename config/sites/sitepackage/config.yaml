@@ -12,13 +12,13 @@ errorHandling:
     errorContentSource: 't3://page?uid=2'
 languages:
   -
-    title: English
+    title: Deutsch
     enabled: true
     languageId: 0
     base: /
-    locale: en_US.UTF-8
-    navigationTitle: English
-    flag: gb
+    locale: de_AT.utf8
+    navigationTitle: Deutsch
+    flag: at
     hreflang: ''
     websiteTitle: ''
 rootPageId: 1

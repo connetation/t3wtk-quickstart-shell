@@ -23,8 +23,10 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 
 ```
 .
+├── auth.json                         Composer credentials for the private Connetation repo
+│                                     (gitignored — create manually, see "Starting a new project")
 ├── .ddev/
-│   ├── config.yaml                   DDEV settings (change name: per project)
+│   ├── config.yaml                   DDEV settings (name: set interactively by setup-project)
 │   └── commands/host/
 │       ├── setup-project             Fresh TYPO3 install (run once after clone)
 │       ├── make-element              Scaffold new content elements
@@ -52,34 +54,53 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 
 ## Starting a new project
 
-### 1. Clone and rename
+### 1. Clone
 
 ```bash
 git clone <this-repo> my-project.com
 cd my-project.com
 ```
 
-Edit `.ddev/config.yaml` — change the `name:` to match your project:
-```yaml
-name: my-project
-```
+There's no need to manually edit `.ddev/config.yaml` or `composer.json` —
+`ddev setup-project` (step 3) prompts for the project name/subdomain and
+renames things for you.
 
-Edit `composer.json` — change the project name:
+> **Watch out for name collisions:** this repo's `.ddev/config.yaml` ships with
+> a fixed default project name. If you've already used this template before
+> and still have that other project registered under the same name, DDEV
+> will error when it tries to start/rename this checkout. Run `ddev list` to
+> check for a clash, then `ddev stop <old-name>` (or `ddev delete <old-name>`
+> to remove it entirely) before continuing.
+
+### 2. Add Composer authentication — **required**
+
+`conn/base`, `conn/elements` and `conn/sitepackage` are installed from the
+private Connetation Composer repository (`https://composer-v2.connetation.at/`),
+which requires authentication. Create `auth.json` in the project root
+(it's gitignored, so it's never committed):
+
 ```json
-"name": "my-vendor/my-project"
+{
+    "http-basic": {
+        "composer-v2.connetation.at": {
+            "username": "your-username",
+            "password": "your-password"
+        }
+    }
+}
 ```
 
-### 2. Start DDEV
-
-```bash
-ddev start
-```
+Contact Connetation if you don't have access credentials. `ddev setup-project`
+checks for this file and refuses to run without it.
 
 ### 3. Run setup (once)
 
 ```bash
 ddev setup-project
 ```
+
+No need to run `ddev start` first — `ddev setup-project` starts the project
+automatically if it isn't running yet.
 
 The command prompts for:
 
