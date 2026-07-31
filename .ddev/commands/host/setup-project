@@ -11,6 +11,16 @@ CURRENT_DDEV_NAME=$(grep "^name:" "$DDEV_CONFIG" | awk '{print $2}')
 # Derive a readable default site title from the DDEV project name
 DEFAULT_SITE_TITLE=$(echo "$CURRENT_DDEV_NAME" | sed 's/[-_]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}')
 
+# Derive default vendor/package name from the current composer.json "name" field
+CURRENT_COMPOSER_NAME=$(grep -m1 '"name"' composer.json | sed -E 's/.*"name": *"([^"]*)".*/\1/')
+DEFAULT_VENDOR="${CURRENT_COMPOSER_NAME%%/*}"
+DEFAULT_PACKAGE="${CURRENT_COMPOSER_NAME##*/}"
+
+# Normalize a string into a valid Composer name segment (lowercase, dash-separated)
+slugify() {
+    echo "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//'
+}
+
 echo ""
 echo "============================================"
 echo "  TYPO3 Project Setup"
@@ -55,6 +65,23 @@ SITE_TITLE="${SITE_TITLE:-$DEFAULT_SITE_TITLE}"
 read -rp "  DDEV subdomain [${CURRENT_DDEV_NAME}]: " INPUT_DDEV_NAME
 INPUT_DDEV_NAME="${INPUT_DDEV_NAME:-$CURRENT_DDEV_NAME}"
 
+read -rp "  Vendor name    [${DEFAULT_VENDOR}]: " INPUT_VENDOR
+INPUT_VENDOR="${INPUT_VENDOR:-$DEFAULT_VENDOR}"
+
+read -rp "  Package name   [${DEFAULT_PACKAGE}]: " INPUT_PACKAGE
+INPUT_PACKAGE="${INPUT_PACKAGE:-$DEFAULT_PACKAGE}"
+
+VENDOR_SLUG=$(slugify "$INPUT_VENDOR")
+PACKAGE_SLUG=$(slugify "$INPUT_PACKAGE")
+
+if [ -z "$VENDOR_SLUG" ] || [ -z "$PACKAGE_SLUG" ]; then
+    echo ""
+    echo "  ✗ Vendor name and package name must not be empty (or resolve to empty after normalization)."
+    exit 1
+fi
+
+COMPOSER_NAME="${VENDOR_SLUG}/${PACKAGE_SLUG}"
+
 read -rp "  Admin username [admin]: " ADMIN_USER
 ADMIN_USER="${ADMIN_USER:-admin}"
 
@@ -70,6 +97,7 @@ DDEV_URL="https://${INPUT_DDEV_NAME}.ddev.site"
 echo ""
 echo "  Site title : ${SITE_TITLE}"
 echo "  URL        : ${DDEV_URL}"
+echo "  Composer   : ${COMPOSER_NAME}"
 echo "  Username   : ${ADMIN_USER}"
 echo "  Email      : ${ADMIN_EMAIL}"
 echo ""
@@ -85,14 +113,26 @@ fi
 
 PROJECT_NAME="$INPUT_DDEV_NAME"
 
-# ── Step 1: Composer install ─────────────────────────────────────────────────
-echo "==> [1/8] Installing Composer dependencies..."
+# ── Step 1: Set composer.json package name ────────────────────────────────────
+echo "==> [1/9] Setting composer.json package name..."
+ddev exec php << PHP
+<?php
+\$file = '/var/www/html/composer.json';
+\$json = json_decode(file_get_contents(\$file), true);
+\$json['name'] = '${COMPOSER_NAME}';
+file_put_contents(\$file, json_encode(\$json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+echo "    composer.json → name: ${COMPOSER_NAME}\n";
+PHP
+echo ""
+
+# ── Step 2: Composer install ─────────────────────────────────────────────────
+echo "==> [2/9] Installing Composer dependencies..."
 ddev composer install
 echo "    Done."
 echo ""
 
-# ── Step 2: Create required directories and patch site config ─────────────────
-echo "==> [2/8] Creating required directories..."
+# ── Step 3: Create required directories and patch site config ─────────────────
+echo "==> [3/9] Creating required directories..."
 ddev exec bash -c "mkdir -p \
     packages \
     public/fileadmin/_processed_ \
@@ -123,8 +163,8 @@ echo "    websiteTitle → \$siteTitle\n";
 PHP
 echo ""
 
-# ── Step 3: Copy conn/sitepackage to packages/sitepackage ────────────────────
-echo "==> [3/8] Moving conn/sitepackage to packages/sitepackage/ ..."
+# ── Step 4: Copy conn/sitepackage to packages/sitepackage ────────────────────
+echo "==> [4/9] Moving conn/sitepackage to packages/sitepackage/ ..."
 
 if [ -d "packages/sitepackage" ]; then
     echo "    packages/sitepackage/ already exists — skipping copy."
@@ -136,8 +176,8 @@ else
 fi
 echo ""
 
-# ── Step 4: Update composer.json to use local path package ───────────────────
-echo "==> [4/8] Switching sitepackage to local path repository..."
+# ── Step 5: Update composer.json to use local path package ───────────────────
+echo "==> [5/9] Switching sitepackage to local path repository..."
 
 ddev exec php << 'PHP'
 <?php
@@ -163,14 +203,14 @@ PHP
 
 echo ""
 
-# ── Step 5: Rewire composer to use packages/sitepackage ──────────────────────
-echo "==> [5/8] Updating Composer to use packages/sitepackage/ ..."
+# ── Step 6: Rewire composer to use packages/sitepackage ──────────────────────
+echo "==> [6/9] Updating Composer to use packages/sitepackage/ ..."
 ddev composer update conn/sitepackage --no-interaction
 echo "    Done. vendor/conn/sitepackage → symlink to packages/sitepackage/"
 echo ""
 
-# ── Step 6: TYPO3 setup ──────────────────────────────────────────────────────
-echo "==> [6/8] Initializing TYPO3 (database schema + admin user)..."
+# ── Step 7: TYPO3 setup ──────────────────────────────────────────────────────
+echo "==> [7/9] Initializing TYPO3 (database schema + admin user)..."
 
 SKIP_TYPO3_SETUP=false
 
@@ -233,8 +273,8 @@ ddev exec vendor/bin/typo3 configuration:set SYS/trustedHostsPattern ".+\.ddev\.
 echo "    Done."
 echo ""
 
-# ── Step 7: Build sitepackage styles (only when SCSS sources are present) ────
-echo "==> [7/8] Building sitepackage CSS..."
+# ── Step 8: Build sitepackage styles (only when SCSS sources are present) ────
+echo "==> [8/9] Building sitepackage CSS..."
 if ddev exec bash -c "test -f /var/www/html/packages/sitepackage/package.json"; then
     ddev exec bash -c "cd /var/www/html/packages/sitepackage && npm install && npm run build"
     echo "    Done."
@@ -245,8 +285,8 @@ else
 fi
 echo ""
 
-# ── Step 8: Reset git history — start this project from a clean slate ────────
-echo "==> [8/8] Resetting git history for a fresh project..."
+# ── Step 9: Reset git history — start this project from a clean slate ────────
+echo "==> [9/9] Resetting git history for a fresh project..."
 rm -rf .git
 git init -q
 echo "    Done. Template history removed, empty repository initialized."
