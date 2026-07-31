@@ -5,6 +5,10 @@ baseVariants: []
 dependencies:
   - conn/sitepackage
   - conn/elements
+  - conn/base
+  - clickstorm/cs-seo
+  - baschte/content-animations
+  - baschte/content-animations-fluid-styles-content
 errorHandling:
   -
     errorCode: 404
