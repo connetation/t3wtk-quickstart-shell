@@ -21,6 +21,11 @@ slugify() {
     echo "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//'
 }
 
+# Escape a value for safe use inside a single-quoted SQL string literal
+escape_sql() {
+    printf '%s' "$1" | sed "s/'/''/g"
+}
+
 echo ""
 echo "============================================"
 echo "  TYPO3 Project Setup"
@@ -262,6 +267,28 @@ if [ "$SKIP_TYPO3_SETUP" = false ]; then
 fi
 echo ""
 
+if [ "$SKIP_TYPO3_SETUP" = false ]; then
+    echo "==>       Creating default pages..."
+
+    ADMIN_UID=$(printf "SELECT uid FROM be_users WHERE username='%s' LIMIT 1;\n" "$(escape_sql "$ADMIN_USER")" \
+        | ddev exec bash -c "mysql -uroot -proot db -N" | tr -d '[:space:]')
+    ADMIN_UID="${ADMIN_UID:-1}"
+
+    SITE_TITLE_SQL=$(escape_sql "$SITE_TITLE")
+
+    cat <<SQL | ddev exec bash -c "mysql -uroot -proot db"
+INSERT INTO pages (pid, tstamp, crdate, title, slug, doktype, is_siteroot, hidden, nav_hide, perms_userid, perms_user, perms_group, perms_everybody, sorting)
+VALUES (0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), '${SITE_TITLE_SQL}', '/', 1, 1, 0, 0, ${ADMIN_UID}, 31, 27, 1, 256);
+
+INSERT INTO pages (pid, tstamp, crdate, title, slug, doktype, is_siteroot, hidden, nav_hide, perms_userid, perms_user, perms_group, perms_everybody, sorting)
+VALUES (1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 'Seite nicht gefunden', '/seite-nicht-gefunden', 1, 0, 0, 1, ${ADMIN_UID}, 31, 27, 1, 256);
+SQL
+
+    echo "    uid=1 → root page ('${SITE_TITLE}'), marked as site root"
+    echo "    uid=2 → 'Seite nicht gefunden' (active, hidden in menu — used by config.yaml's 404 errorHandling)"
+fi
+echo ""
+
 echo "==>       Setting up extensions and flushing cache..."
 ddev exec vendor/bin/typo3 extension:setup
 ddev exec vendor/bin/typo3 cache:flush
@@ -307,8 +334,9 @@ echo "  1. Commit the project as your initial commit:"
 echo "       git add -A"
 echo "       git commit -m 'Initial commit'"
 echo ""
-echo "  2. Log into TYPO3 backend, create a root page,"
-echo "     mark it as 'Site Root', then configure in Site Management"
+echo "  2. Log into TYPO3 backend — the root page (uid=1, site root) and the"
+echo "     'Seite nicht gefunden' page (uid=2, used as the 404 page) are"
+echo "     already in place, ready to fill with content"
 echo ""
 echo "  3. Customize packages/sitepackage/ to your needs,"
 echo "     rebuild CSS with: ddev exec 'cd /var/www/html/packages/sitepackage && npm run build'"
