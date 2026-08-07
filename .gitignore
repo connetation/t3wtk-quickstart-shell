@@ -13,7 +13,6 @@ public/fileadmin/
 # Environment & local system config (generated per environment by DDEV/install tool)
 config/system/additional.php
 config/system/additional.ddev.php
-config/system/settings.php
 .env
 .env.*
 
