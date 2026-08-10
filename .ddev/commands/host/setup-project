@@ -195,7 +195,7 @@ file_put_contents($pkgJsonPath, json_encode($pkg, JSON_PRETTY_PRINT | JSON_UNESC
 
 $composerJsonPath = $root . '/composer.json';
 $json = json_decode(file_get_contents($composerJsonPath), true);
-$json['require']['conn/sitepackage'] = '@dev';
+$json['require']['conn/sitepackage'] = 'dev-local';
 $json['repositories'] = array_values(array_filter(
     $json['repositories'],
     fn($r) => !($r['type'] === 'vcs' && str_contains($r['url'], 'sitepackage'))
@@ -203,7 +203,7 @@ $json['repositories'] = array_values(array_filter(
 file_put_contents($composerJsonPath, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
 echo "    packages/sitepackage/composer.json → version: dev-local\n";
-echo "    composer.json → conn/sitepackage @dev, VCS repo removed\n";
+echo "    composer.json → conn/sitepackage dev-local, VCS repo removed\n";
 PHP
 
 echo ""
