@@ -66,7 +66,8 @@
         },
         {
             "type": "composer",
-            "url": "https://composer-v2.connetation.at/"
+            "url": "https://composer-v2.connetation.at/",
+            "exclude": ["conn/sitepackage"]
         },
         {
             "type": "composer",
