@@ -162,9 +162,11 @@ ddev exec php << PHP
 \$content = file_get_contents(\$file);
 \$content = preg_replace("/^base: '.*'/m",        "base: '\$ddevUrl/'",  \$content);
 \$content = preg_replace("/^websiteTitle: '.*'/m", "websiteTitle: '\$siteTitle'", \$content);
+\$content = preg_replace("#Sitemap: https?://\S+/sitemap\.xml#", "Sitemap: \$ddevUrl/sitemap.xml", \$content);
 file_put_contents(\$file, \$content);
 echo "    base        → \$ddevUrl/\n";
 echo "    websiteTitle → \$siteTitle\n";
+echo "    robots.txt sitemap → \$ddevUrl/sitemap.xml\n";
 PHP
 echo ""
 

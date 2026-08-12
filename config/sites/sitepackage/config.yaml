@@ -6,6 +6,7 @@ dependencies:
   - conn/sitepackage
   - conn/elements
   - conn/base
+  - typo3/seo-sitemap
   - clickstorm/cs-seo
   - baschte/content-animations
   - baschte/content-animations-fluid-styles-content
@@ -27,6 +28,29 @@ languages:
     websiteTitle: ''
 rootPageId: 1
 websiteTitle: 'My TYPO3 Project'
+routeEnhancers:
+  PageTypeSuffix:
+    type: PageType
+    default: /
+    index: /
+    map:
+      /: 0
+      sitemap.xml: 1533906435
+  Sitemap:
+    type: Simple
+    routePath: 'sitemap/{sitemap}'
+    aspects:
+      sitemap:
+        type: StaticValueMapper
+        map:
+          pages: pages
+
+routes:
+  -
+    route: robots.txt
+    type: staticText
+    content: "User-agent: *\r\nDisallow: /fileadmin/_temp_/\r\nDisallow: /t3lib/\r\nDisallow: /typo3/\r\nDisallow: /typo3_src/\r\nDisallow: /typo3conf/\r\nDisallow: /clear.gif\r\nAllow: /typo3/sysext/frontend/Resources/Public/*\r\nAllow: /typo3conf/ext/news/Resources/Public/*\r\n\r\nSitemap: https://your-project.ddev.site/sitemap.xml\r\n"
+
 #if neede add events/news RouteEnhancer, add events/news directory ID in .yaml
 # imports:
   # -
