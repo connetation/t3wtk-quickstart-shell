@@ -200,7 +200,10 @@ PRODUCTION_HOST: "your-server.example.com"
 PRODUCTION_USER: "your-deploy-user"
 ```
 
-Add `SSH_PRIVATE_KEY_PRODUCTION` to GitLab CI/CD variables (project → Settings → CI/CD → Variables).
+Add `SSH_PRIVATE_KEY_PRODUCTION` to GitLab CI/CD variables (project → Settings → CI/CD → Variables → Add variable):
+- **Type**: `File` (not `Variable`) — the pipeline reads the key from the path GitLab injects (`ssh-add "$SSH_PRIVATE_KEY_PRODUCTION"`), not from the variable's value directly. `File` type also keeps the key out of the job's environment variable list, and it's required here anyway since a multi-line SSH key can't use GitLab's `Masked` option. Note: GitLab writes `File` type variables to disk as `0666`, so the pipeline runs `chmod 600` on it before `ssh-add` — otherwise `ssh-add` refuses the key with "UNPROTECTED PRIVATE KEY FILE".
+- **Protected**: on, so the key is only exposed to pipelines running on protected branches (e.g. `main`) — make sure `main` is a protected branch before relying on this.
+- Paste the private key exactly as generated (e.g. `~/.ssh/id_ed25519`), including the `-----BEGIN...-----`/`-----END...-----` lines.
 
 ### 2. Production `config/system/additional.php`
 

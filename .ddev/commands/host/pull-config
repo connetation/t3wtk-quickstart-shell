@@ -40,7 +40,7 @@ REMOTE_DIR="$REMOTE_PATH/config/sites/sitepackage"
 
 echo "Syncing site config from $ENVIRONMENT ($REMOTE_USER@$REMOTE_HOST)..."
 
-rsync -az \
+rsync -azL \
     -e "ssh -p $REMOTE_PORT -o StrictHostKeyChecking=accept-new" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/config.yaml" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/settings.yaml" \

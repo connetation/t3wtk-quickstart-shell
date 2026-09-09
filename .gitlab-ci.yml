@@ -13,7 +13,8 @@ stages:
 
 .configureSSHAgent: &configureSSHAgent |-
   eval $(ssh-agent -s)
-  echo "$SSH_PRIVATE_KEY_PRODUCTION" | tr -d '\r' | ssh-add -
+  chmod 600 "$SSH_PRIVATE_KEY_PRODUCTION"
+  ssh-add "$SSH_PRIVATE_KEY_PRODUCTION"
   mkdir -p ~/.ssh
   ssh-keyscan ${PRODUCTION_HOST} >> ~/.ssh/known_hosts
   chmod 700 ~/.ssh
