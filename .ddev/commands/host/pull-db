@@ -61,26 +61,25 @@ if [[ "$REMOTE_TYPE" == "docker" ]]; then
 else
     ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=accept-new "$REMOTE_USER@$REMOTE_HOST" "php8.2 /dev/stdin '$REMOTE_PATH'" << 'PHPEOF' > "$OUTFILE"
 <?php
+// Mirrors TYPO3's own bootstrap order: settings.php is merged in first, then
+// additional.php is included and always wins, since that's the whole point
+// of additional.php (e.g. per-environment DB overrides not committed to git).
 $settingsPath = $argv[1] . '/config/system';
 $GLOBALS['TYPO3_CONF_VARS'] = [];
-$c = [];
 foreach (['settings.php', 'additional.php'] as $file) {
     $fullPath = $settingsPath . '/' . $file;
     if (file_exists($fullPath)) {
         $loaded = include($fullPath);
-        if (is_array($loaded) && isset($loaded['DB'])) {
-            $c = array_replace_recursive($c, $loaded);
+        if (is_array($loaded)) {
+            $GLOBALS['TYPO3_CONF_VARS'] = array_replace_recursive($GLOBALS['TYPO3_CONF_VARS'], $loaded);
         }
     }
 }
-if (empty($c['DB']['Connections']['Default']['user']) && !empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['user'])) {
-    $c = array_replace_recursive($c, ['DB' => $GLOBALS['TYPO3_CONF_VARS']['DB']]);
-}
-if (empty($c['DB']['Connections']['Default'])) {
+$db = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] ?? [];
+if (empty($db)) {
     fwrite(STDERR, "ERROR: Could not read DB credentials from TYPO3 config\n");
     exit(1);
 }
-$db = $c['DB']['Connections']['Default'];
 $cmd = sprintf(
     'mysqldump --single-transaction --default-character-set=utf8mb4 -h %s -P %d -u %s -p%s %s | gzip',
     escapeshellarg($db['host'] ?: 'localhost'),
