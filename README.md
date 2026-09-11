@@ -30,6 +30,7 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 │   ├── config.yaml                   DDEV settings (name: set interactively by setup-project)
 │   └── commands/host/
 │       ├── setup-project             Fresh TYPO3 install (run once after clone)
+│       ├── languages.conf            Language menu offered by setup-project (edit to add options)
 │       ├── make-element              Scaffold new content elements
 │       ├── pull-db                   Download DB dump from remote
 │       ├── pull-config               Sync site config from remote
@@ -112,6 +113,14 @@ The command prompts for:
 | Admin username | `admin` | TYPO3 admin account |
 | Admin password | `Admin1234!` | TYPO3 admin account |
 | Admin email | `admin@example.com` | TYPO3 admin account |
+| Languages | `Deutsch` (menu from `languages.conf`) | `config/sites/…/config.yaml` `languages:` block |
+
+Pick one or more languages, comma-separated (e.g. `1,2,4`), or `Other` to enter
+a custom one (title, ISO 639-1 code, locale, flag, hreflang) on the spot. The
+**first** language picked becomes the default (`languageId: 0`, served at `/`);
+every other one gets its own `languageId`, is served at `/<code>/`, and
+falls back to the default language for untranslated pages. Edit
+`.ddev/commands/host/languages.conf` to change the menu itself.
 
 Then does the following in order:
 

@@ -33,6 +33,10 @@ config/sites/sitepackage/settings.yaml
 # Database dumps
 db_dump/
 
+# setup-project transient state (removed by the script itself; ignored as a
+# safety net in case a run is interrupted before cleanup)
+/.setup-languages.yaml.tmp
+
 # Claude Code workspace
 .claude/
 

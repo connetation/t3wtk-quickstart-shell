@@ -26,6 +26,15 @@ escape_sql() {
     printf '%s' "$1" | sed "s/'/''/g"
 }
 
+# Load the curated language menu (code|title|locale|flag|hreflang per line)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LANGUAGES_CONF="${SCRIPT_DIR}/languages.conf"
+LANG_OPTIONS=()
+while IFS= read -r conf_line; do
+    [[ -z "$conf_line" || "$conf_line" == \#* ]] && continue
+    LANG_OPTIONS+=("$conf_line")
+done < "$LANGUAGES_CONF"
+
 echo ""
 echo "============================================"
 echo "  TYPO3 Project Setup"
@@ -97,12 +106,118 @@ ADMIN_PASSWORD="${ADMIN_PASSWORD:-Admin1234!}"
 read -rp "  Admin email    [admin@example.com]: " ADMIN_EMAIL
 ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}"
 
+# ── Language selection ─────────────────────────────────────────────────────────
+echo ""
+echo "  Available languages (first pick = default/main language):"
+for i in "${!LANG_OPTIONS[@]}"; do
+    IFS='|' read -r _code _title _locale _flag _hreflang <<< "${LANG_OPTIONS[$i]}"
+    printf "    %2d) %s\n" "$((i + 1))" "$_title"
+done
+CUSTOM_CHOICE_NUM=$((${#LANG_OPTIONS[@]} + 1))
+printf "    %2d) Other (enter a custom language)\n" "$CUSTOM_CHOICE_NUM"
+echo ""
+read -rp "  Languages (comma-separated) [1]: " LANG_SELECTION
+LANG_SELECTION="${LANG_SELECTION:-1}"
+
+SELECTED_LANGUAGES=()
+declare -A SEEN_CHOICES=()
+declare -A SEEN_CODES=()
+
+IFS=',' read -ra RAW_LANG_CHOICES <<< "$LANG_SELECTION"
+for choice in "${RAW_LANG_CHOICES[@]}"; do
+    choice="$(echo "$choice" | tr -d '[:space:]')"
+    [ -z "$choice" ] && continue
+
+    if ! [[ "$choice" =~ ^[0-9]+$ ]]; then
+        echo ""
+        echo "  ✗ Invalid language selection: '${choice}'"
+        exit 1
+    fi
+
+    if [ -n "${SEEN_CHOICES[$choice]:-}" ]; then
+        continue
+    fi
+    SEEN_CHOICES[$choice]=1
+
+    if [ "$choice" -ge 1 ] && [ "$choice" -le "${#LANG_OPTIONS[@]}" ]; then
+        LANG_ENTRY="${LANG_OPTIONS[$((choice - 1))]}"
+    elif [ "$choice" -eq "$CUSTOM_CHOICE_NUM" ]; then
+        echo ""
+        read -rp "    Language title (e.g. Nederlands): " CUSTOM_TITLE
+        read -rp "    ISO 639-1 code, used in the URL path (e.g. nl): " CUSTOM_CODE
+        read -rp "    Locale (e.g. nl_NL.utf8): " CUSTOM_LOCALE
+        read -rp "    Flag code [Resources/Public/Icons/Flags in typo3/cms-core] (e.g. nl): " CUSTOM_FLAG
+        read -rp "    hreflang [defaults to code] (e.g. nl): " CUSTOM_HREFLANG
+        echo ""
+
+        if [ -z "$CUSTOM_TITLE" ] || [ -z "$CUSTOM_CODE" ] || [ -z "$CUSTOM_LOCALE" ]; then
+            echo "  ✗ Title, code and locale are required for a custom language."
+            exit 1
+        fi
+        CUSTOM_FLAG="${CUSTOM_FLAG:-$CUSTOM_CODE}"
+        CUSTOM_HREFLANG="${CUSTOM_HREFLANG:-$CUSTOM_CODE}"
+        LANG_ENTRY="${CUSTOM_CODE}|${CUSTOM_TITLE}|${CUSTOM_LOCALE}|${CUSTOM_FLAG}|${CUSTOM_HREFLANG}"
+    else
+        echo ""
+        echo "  ✗ Invalid language selection: '${choice}'"
+        exit 1
+    fi
+
+    LANG_ENTRY_CODE="${LANG_ENTRY%%|*}"
+    if [ -n "${SEEN_CODES[$LANG_ENTRY_CODE]:-}" ]; then
+        echo ""
+        echo "  ✗ Language code '${LANG_ENTRY_CODE}' selected more than once."
+        exit 1
+    fi
+    SEEN_CODES[$LANG_ENTRY_CODE]=1
+
+    SELECTED_LANGUAGES+=("$LANG_ENTRY")
+done
+
+if [ "${#SELECTED_LANGUAGES[@]}" -eq 0 ]; then
+    echo ""
+    echo "  ✗ At least one language must be selected."
+    exit 1
+fi
+
+# Build the config.yaml "languages:" block and a one-line summary for display
+LANG_SUMMARY=""
+LANGUAGES_YAML="languages:"$'\n'
+for i in "${!SELECTED_LANGUAGES[@]}"; do
+    IFS='|' read -r lang_code lang_title lang_locale lang_flag lang_hreflang <<< "${SELECTED_LANGUAGES[$i]}"
+
+    if [ "$i" -eq 0 ]; then
+        lang_base="/"
+        LANG_SUMMARY="${lang_title} (default)"
+    else
+        lang_base="/${lang_code}/"
+        LANG_SUMMARY="${LANG_SUMMARY}, ${lang_title}"
+    fi
+
+    LANGUAGES_YAML+="  -"$'\n'
+    LANGUAGES_YAML+="    title: ${lang_title}"$'\n'
+    LANGUAGES_YAML+="    enabled: true"$'\n'
+    LANGUAGES_YAML+="    languageId: ${i}"$'\n'
+    LANGUAGES_YAML+="    base: ${lang_base}"$'\n'
+    LANGUAGES_YAML+="    locale: ${lang_locale}"$'\n'
+    LANGUAGES_YAML+="    navigationTitle: ${lang_title}"$'\n'
+    LANGUAGES_YAML+="    flag: ${lang_flag}"$'\n'
+    LANGUAGES_YAML+="    hreflang: '${lang_hreflang}'"$'\n'
+    LANGUAGES_YAML+="    websiteTitle: ''"$'\n'
+    if [ "$i" -gt 0 ]; then
+        LANGUAGES_YAML+="    fallbackType: fallback"$'\n'
+        LANGUAGES_YAML+="    fallbacks:"$'\n'
+        LANGUAGES_YAML+="      - 0"$'\n'
+    fi
+done
+
 DDEV_URL="https://${INPUT_DDEV_NAME}.ddev.site"
 
 echo ""
 echo "  Site title : ${SITE_TITLE}"
 echo "  URL        : ${DDEV_URL}"
 echo "  Composer   : ${COMPOSER_NAME}"
+echo "  Languages  : ${LANG_SUMMARY}"
 echo "  Username   : ${ADMIN_USER}"
 echo "  Email      : ${ADMIN_EMAIL}"
 echo ""
@@ -119,7 +234,7 @@ fi
 PROJECT_NAME="$INPUT_DDEV_NAME"
 
 # ── Step 1: Set composer.json package name ────────────────────────────────────
-echo "==> [1/9] Setting composer.json package name..."
+echo "==> [1/10] Setting composer.json package name..."
 ddev exec php << PHP
 <?php
 \$file = '/var/www/html/composer.json';
@@ -131,13 +246,13 @@ PHP
 echo ""
 
 # ── Step 2: Composer install ─────────────────────────────────────────────────
-echo "==> [2/9] Installing Composer dependencies..."
+echo "==> [2/10] Installing Composer dependencies..."
 ddev composer install
 echo "    Done."
 echo ""
 
 # ── Step 3: Create required directories and patch site config ─────────────────
-echo "==> [3/9] Creating required directories..."
+echo "==> [3/10] Creating required directories..."
 ddev exec bash -c "mkdir -p \
     packages \
     public/fileadmin/_processed_ \
@@ -154,24 +269,30 @@ echo "    Done."
 echo ""
 
 echo "==>       Patching site config..."
+printf '%s' "$LANGUAGES_YAML" > .setup-languages.yaml.tmp
 ddev exec php << PHP
 <?php
-\$ddevUrl   = '${DDEV_URL}';
-\$siteTitle = '${SITE_TITLE}';
+\$ddevUrl     = '${DDEV_URL}';
+\$siteTitle   = '${SITE_TITLE}';
+\$langSummary = '${LANG_SUMMARY}';
 \$file = '/var/www/html/config/sites/sitepackage/config.yaml';
 \$content = file_get_contents(\$file);
 \$content = preg_replace("/^base: '.*'/m",        "base: '\$ddevUrl/'",  \$content);
 \$content = preg_replace("/^websiteTitle: '.*'/m", "websiteTitle: '\$siteTitle'", \$content);
 \$content = preg_replace("#Sitemap: https?://\S+/sitemap\.xml#", "Sitemap: \$ddevUrl/sitemap.xml", \$content);
+\$languagesYaml = rtrim(file_get_contents('/var/www/html/.setup-languages.yaml.tmp'));
+\$content = preg_replace('/^languages:\n(?:.*\n)*?(?=^rootPageId:)/m', \$languagesYaml . "\n", \$content, 1);
 file_put_contents(\$file, \$content);
 echo "    base        → \$ddevUrl/\n";
 echo "    websiteTitle → \$siteTitle\n";
 echo "    robots.txt sitemap → \$ddevUrl/sitemap.xml\n";
+echo "    languages   → \$langSummary\n";
 PHP
+rm -f .setup-languages.yaml.tmp
 echo ""
 
 # ── Step 4: Copy conn/sitepackage to packages/sitepackage ────────────────────
-echo "==> [4/9] Moving conn/sitepackage to packages/sitepackage/ ..."
+echo "==> [4/10] Moving conn/sitepackage to packages/sitepackage/ ..."
 
 if [ -d "packages/sitepackage" ]; then
     echo "    packages/sitepackage/ already exists — skipping copy."
@@ -184,7 +305,7 @@ fi
 echo ""
 
 # ── Step 5: Update composer.json to use local path package ───────────────────
-echo "==> [5/9] Switching sitepackage to local path repository..."
+echo "==> [5/10] Switching sitepackage to local path repository..."
 
 ddev exec php << 'PHP'
 <?php
@@ -211,13 +332,13 @@ PHP
 echo ""
 
 # ── Step 6: Rewire composer to use packages/sitepackage ──────────────────────
-echo "==> [6/9] Updating Composer to use packages/sitepackage/ ..."
+echo "==> [6/10] Updating Composer to use packages/sitepackage/ ..."
 ddev composer update conn/sitepackage --no-interaction
 echo "    Done. vendor/conn/sitepackage → symlink to packages/sitepackage/"
 echo ""
 
 # ── Step 7: TYPO3 setup ──────────────────────────────────────────────────────
-echo "==> [7/9] Initializing TYPO3 (database schema + admin user)..."
+echo "==> [7/10] Initializing TYPO3 (database schema + admin user)..."
 
 SKIP_TYPO3_SETUP=false
 
@@ -303,7 +424,7 @@ echo "    Done."
 echo ""
 
 # ── Step 8: Build sitepackage styles (only when SCSS sources are present) ────
-echo "==> [8/9] Building sitepackage CSS..."
+echo "==> [8/10] Building sitepackage CSS..."
 if ddev exec bash -c "test -f /var/www/html/packages/sitepackage/package.json"; then
     ddev exec bash -c "cd /var/www/html/packages/sitepackage && npm install && npm run build"
     echo "    Done."
@@ -314,8 +435,20 @@ else
 fi
 echo ""
 
-# ── Step 9: Reset git history — start this project from a clean slate ────────
-echo "==> [9/9] Resetting git history for a fresh project..."
+# ── Step 9: Warm caches — avoids a transient failure window on first visit ───
+# Right after extension:setup/composer settle packages/sitepackage as the
+# local path package, the FIRST few frontend requests can hit a stale
+# TypoScript/Sets compile (e.g. EXT:form's FormFrontend template resolving to
+# the wrong root path until things settle) — crawling every page here forces
+# that compile to happen now, before anyone loads the site themselves.
+echo "==> [9/10] Warming caches..."
+ddev exec vendor/bin/typo3 cache:warmup || true
+ddev exec vendor/bin/typo3 conn:warmup --insecure || echo "    (warmup crawl reported an issue — non-fatal, continuing)"
+echo "    Done."
+echo ""
+
+# ── Step 10: Reset git history — start this project from a clean slate ───────
+echo "==> [10/10] Resetting git history for a fresh project..."
 rm -rf .git
 git init -q
 echo "    Done. Template history removed, empty repository initialized."
