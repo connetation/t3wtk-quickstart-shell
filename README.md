@@ -18,6 +18,7 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 - [Overwrite / extend conn/elements](docs/extend-elements.md)
 - [Overwrite / extend conn/news](docs/extend-news.md)
 - [Overwrite / extend conn/events](docs/extend-events.md)
+- [Contact forms (EXT:form)](docs/forms.md) — the bundled Contact form, adding new forms/fields, validation, localization, email templates
 
 ## Project structure
 
