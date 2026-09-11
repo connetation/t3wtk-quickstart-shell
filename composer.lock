@@ -550,11 +550,11 @@
         },
         {
             "name": "conn/base",
-            "version": "1.7.8",
+            "version": "1.7.9",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/base.git",
-                "reference": "d1eff42bdb946b4d1cbc5467301ac7ee58dfbaa4"
+                "reference": "5689e8ef1ab9e18602bde462cca75dc14315f8cd"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -612,16 +612,16 @@
         },
         {
             "name": "conn/sitepackage",
-            "version": "1.7.2",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:connetation/connetation/sitepackage.git",
-                "reference": "4195e7fa2850eb0ad03791eae809b2676de3167e"
+                "reference": "ae1ab408bcbaa570cde2791567de616c5cc538f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=4195e7fa2850eb0ad03791eae809b2676de3167e",
-                "reference": "4195e7fa2850eb0ad03791eae809b2676de3167e",
+                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=ae1ab408bcbaa570cde2791567de616c5cc538f3",
+                "reference": "ae1ab408bcbaa570cde2791567de616c5cc538f3",
                 "shasum": ""
             },
             "require": {
@@ -651,10 +651,10 @@
             ],
             "description": "Connetation Sitepackage – site-specific extension built on conn/base for TYPO3 LTS 14",
             "support": {
-                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.7.2",
+                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.7.3",
                 "issues": "https://gitlab.com/connetation/connetation/sitepackage/-/issues"
             },
-            "time": "2026-08-12T11:41:59+02:00"
+            "time": "2026-09-11T13:39:27+02:00"
         },
         {
             "name": "dasprid/enum",
