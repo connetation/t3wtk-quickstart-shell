@@ -10,6 +10,7 @@ dependencies:
   - clickstorm/cs-seo
   - baschte/content-animations
   - baschte/content-animations-fluid-styles-content
+  - typo3/form
 errorHandling:
   -
     errorCode: 404
