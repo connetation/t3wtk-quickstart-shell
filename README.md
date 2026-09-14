@@ -146,17 +146,19 @@ git commit -m "Initial commit"
 
 From this point on, `packages/sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `conn/sitepackage` VCS remains.
 
-### 5. First login and root page
+### 5. First login
 
 Open `https://<project-name>.ddev.site/typo3`
 
 - Username: `admin`
 - Password: `Admin1234!` ← **change this immediately**
 
-In the TYPO3 backend:
-1. Create a page titled "Home"
-2. In page properties → Behaviour → tick **"Use as Root Page"**
-3. Go to **Site Management** → verify the site config is linked to your root page
+On a successful run, `setup-project` has already created and wired up two pages for you — there is no manual root-page setup step:
+
+- **uid 1** — the root page, titled with the project name you entered during setup, marked as site root (`is_siteroot`)
+- **uid 2** — "Seite nicht gefunden" ("Page not found"), active but hidden from menus, wired up as the 404 page via `config/sites/sitepackage/config.yaml`'s `errorHandling`
+
+Log into the TYPO3 backend and both pages are already there, ready to fill with content.
 
 ## Customisation
 

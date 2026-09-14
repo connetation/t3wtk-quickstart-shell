@@ -550,11 +550,11 @@
         },
         {
             "name": "conn/base",
-            "version": "1.7.9",
+            "version": "1.7.10",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/base.git",
-                "reference": "5689e8ef1ab9e18602bde462cca75dc14315f8cd"
+                "reference": "77052dc3f37f1188700847d328af9d5a58c3ed91"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -581,11 +581,11 @@
         },
         {
             "name": "conn/elements",
-            "version": "1.8.14",
+            "version": "1.8.17",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/connetation/elements.git",
-                "reference": "d2e9f991cf89c8aaf26d129995fb5d35fa732856"
+                "reference": "c1f334c5a8b5af7563ef8fd02bdb9fd6bc026061"
             },
             "require": {
                 "b13/container": "^3.2",
@@ -612,16 +612,16 @@
         },
         {
             "name": "conn/sitepackage",
-            "version": "1.7.3",
+            "version": "1.7.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:connetation/connetation/sitepackage.git",
-                "reference": "ae1ab408bcbaa570cde2791567de616c5cc538f3"
+                "reference": "63e5a02a22321cb9a330b7e50117477e6fefb714"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=ae1ab408bcbaa570cde2791567de616c5cc538f3",
-                "reference": "ae1ab408bcbaa570cde2791567de616c5cc538f3",
+                "url": "https://gitlab.com/api/v4/projects/connetation%2Fconnetation%2Fsitepackage/repository/archive.zip?sha=63e5a02a22321cb9a330b7e50117477e6fefb714",
+                "reference": "63e5a02a22321cb9a330b7e50117477e6fefb714",
                 "shasum": ""
             },
             "require": {
@@ -651,10 +651,10 @@
             ],
             "description": "Connetation Sitepackage – site-specific extension built on conn/base for TYPO3 LTS 14",
             "support": {
-                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.7.3",
+                "source": "https://gitlab.com/connetation/connetation/sitepackage/-/tree/1.7.4",
                 "issues": "https://gitlab.com/connetation/connetation/sitepackage/-/issues"
             },
-            "time": "2026-09-11T13:39:27+02:00"
+            "time": "2026-09-14T15:02:42+02:00"
         },
         {
             "name": "dasprid/enum",
@@ -1647,16 +1647,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.8.0",
+            "version": "v5.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "044a6a392ff8ad0d61f14370a5fbbd0a0107152f"
+                "reference": "9e33da9553fe7786f0962b35f4e4ecf01be89def"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/044a6a392ff8ad0d61f14370a5fbbd0a0107152f",
-                "reference": "044a6a392ff8ad0d61f14370a5fbbd0a0107152f",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/9e33da9553fe7786f0962b35f4e4ecf01be89def",
+                "reference": "9e33da9553fe7786f0962b35f4e4ecf01be89def",
                 "shasum": ""
             },
             "require": {
@@ -1698,9 +1698,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.8.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.9.0"
             },
-            "time": "2026-07-04T14:30:18+00:00"
+            "time": "2026-09-13T18:51:52+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

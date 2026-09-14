@@ -47,3 +47,6 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Local documentation render output
+Documentation-GENERATED-temp/
