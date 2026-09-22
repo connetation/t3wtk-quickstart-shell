@@ -34,7 +34,7 @@ Project structure
    │   ├── deploy.php                    Deployer rsync tasks and shared-file config
    │   └── hosts.yaml                    Server credentials (hostname, user, path, socket)
    ├── packages/                         Created by ddev setup-project
-   │   └── sitepackage/                  conn/sitepackage copied here, .git removed
+   │   └── t3kit-sitepackage/            conn/t3kit-sitepackage copied here, .git removed
    │                                     Tracked by this project's git — customize freely
    ├── public/                           TYPO3 web root
    │   ├── index.php
@@ -51,14 +51,14 @@ How the pieces fit together
 ::
 
    conn-project-template (this repo, becomes your project after setup)
-   ├── packages/sitepackage/  (a full, git-detached copy of conn/sitepackage — yours to edit)
-   │   └── depends on: conn/base
-   ├── conn/base              (Composer package — reusable foundation, never edit directly)
-   └── conn/elements          (Composer package, optional — content elements, never edit directly)
+   ├── packages/t3kit-sitepackage/  (a full, git-detached copy of conn/t3kit-sitepackage — yours to edit)
+   │   └── depends on: conn/t3kit-base
+   ├── conn/t3kit-base        (Composer package — reusable foundation, never edit directly)
+   └── conn/t3kit-elements    (Composer package, optional — content elements, never edit directly)
 
-The key idea: ``conn/base`` and ``conn/elements`` stay Composer-managed
+The key idea: ``conn/t3kit-base`` and ``conn/t3kit-elements`` stay Composer-managed
 vendor packages you never touch directly (edits would be lost on
-``composer update``). ``conn/sitepackage`` is different — ``setup-project``
-copies it into :file:`packages/sitepackage/`, detaches it from its
+``composer update``). ``conn/t3kit-sitepackage`` is different — ``setup-project``
+copies it into :file:`packages/t3kit-sitepackage/`, detaches it from its
 upstream git history, and rewires Composer to load it from that local
 path. From that point on it belongs entirely to your project.

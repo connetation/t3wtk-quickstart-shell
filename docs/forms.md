@@ -4,17 +4,17 @@ This template ships one example [EXT:form](https://docs.typo3.org/c/typo3/cms-fo
 
 ## Where things live
 
-- **Generic validation engine** — `vendor/conn/base`'s `Resources/Private/JavaScript/main.js` (`initFormValidation`). Fully data-attribute driven (`[required]` / `[data-validate-type]` + matching `data-validate-*-message`), so it needs zero changes for a new form or field. Don't edit it per-project — see [Overwrite / extend conn/elements](extend-elements.md) for why (same reasoning applies to `conn/base`).
-- **The actual form(s), email templates, and translations** — `packages/sitepackage/Resources/Private/Forms/`, `Templates/Email/`, `Layouts/Email/`, `Language/`. Fully owned by this project, customize freely (same as everything else under `packages/sitepackage/`, see the main [README](../README.md#sitepackage)).
+- **Generic validation engine** — `vendor/conn/t3kit-base`'s `Resources/Private/JavaScript/main.js` (`initFormValidation`). Fully data-attribute driven (`[required]` / `[data-validate-type]` + matching `data-validate-*-message`), so it needs zero changes for a new form or field. Don't edit it per-project — see [Overwrite / extend conn/t3kit-elements](extend-elements.md) for why (same reasoning applies to `conn/t3kit-base`).
+- **The actual form(s), email templates, and translations** — `packages/t3kit-sitepackage/Resources/Private/Forms/`, `Templates/Email/`, `Layouts/Email/`, `Language/`. Fully owned by this project, customize freely (same as everything else under `packages/t3kit-sitepackage/`, see the main [README](../README.md#sitepackage)).
 
 ## Full guide
 
 The detailed how-to — adding a new form, wiring up validation, adding a
 language, adding an email template, and a note on why every path here is a
-hardcoded `EXT:conn_sitepackage/...` reference — lives right next to the
+hardcoded `EXT:conn_t3kit_sitepackage/...` reference — lives right next to the
 code:
-[`packages/sitepackage/Resources/Private/Forms/README.md`](../packages/sitepackage/Resources/Private/Forms/README.md)
-(only present after `ddev setup-project` has copied `conn/sitepackage` into
+[`packages/t3kit-sitepackage/Resources/Private/Forms/README.md`](../packages/t3kit-sitepackage/Resources/Private/Forms/README.md)
+(only present after `ddev setup-project` has copied `conn/t3kit-sitepackage` into
 `packages/` — see [Starting a new project](../README.md#starting-a-new-project)).
 
 ## Quick reference

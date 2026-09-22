@@ -14,15 +14,15 @@
             "php": "8.3.0"
         },
         "preferred-install": {
-            "conn/sitepackage": "source"
+            "conn/t3kit-sitepackage": "source"
         },
         "sort-packages": true
     },
     "require": {
         "b13/container": "^3.2",
-        "conn/base": "^1.0.0",
-        "conn/elements": "^1.0.0",
-        "conn/sitepackage": "^1.0.0",
+        "conn/t3kit-base": "^2.0.0",
+        "conn/t3kit-elements": "^2.0.0",
+        "conn/t3kit-sitepackage": "^2.0.0",
         "typo3/cms-adminpanel": "^14.3",
         "typo3/cms-backend": "^14.3",
         "typo3/cms-belog": "^14.3",
@@ -62,12 +62,12 @@
         },
         {
             "type": "vcs",
-            "url": "https://gitlab.com/connetation/connetation/sitepackage.git"
+            "url": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage.git"
         },
         {
             "type": "composer",
             "url": "https://composer-v2.connetation.at/",
-            "exclude": ["conn/sitepackage"]
+            "exclude": ["conn/t3kit-sitepackage"]
         },
         {
             "type": "composer",

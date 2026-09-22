@@ -51,7 +51,7 @@ echo ""
 if [ ! -f "$(pwd)/auth.json" ]; then
     echo "  ✗ auth.json not found in project root."
     echo ""
-    echo "    This project installs conn/base, conn/elements and conn/sitepackage"
+    echo "    This project installs conn/t3kit-base, conn/t3kit-elements and conn/t3kit-sitepackage"
     echo "    from the private Connetation Composer repository"
     echo "    (https://composer-v2.connetation.at/), which requires authentication."
     echo ""
@@ -291,15 +291,15 @@ PHP
 rm -f .setup-languages.yaml.tmp
 echo ""
 
-# ── Step 4: Copy conn/sitepackage to packages/sitepackage ────────────────────
-echo "==> [4/10] Moving conn/sitepackage to packages/sitepackage/ ..."
+# ── Step 4: Copy conn/t3kit-sitepackage to packages/t3kit-sitepackage ──────────────
+echo "==> [4/10] Moving conn/t3kit-sitepackage to packages/t3kit-sitepackage/ ..."
 
-if [ -d "packages/sitepackage" ]; then
-    echo "    packages/sitepackage/ already exists — skipping copy."
+if [ -d "packages/t3kit-sitepackage" ]; then
+    echo "    packages/t3kit-sitepackage/ already exists — skipping copy."
 else
-    ddev exec bash -c "cp -r vendor/conn/sitepackage packages/sitepackage"
+    ddev exec bash -c "cp -r vendor/conn/t3kit-sitepackage packages/t3kit-sitepackage"
     echo "    Copied. Removing embedded .git..."
-    ddev exec bash -c "rm -rf packages/sitepackage/.git"
+    ddev exec bash -c "rm -rf packages/t3kit-sitepackage/.git"
     echo "    Done."
 fi
 echo ""
@@ -311,30 +311,30 @@ ddev exec php << 'PHP'
 <?php
 $root = '/var/www/html';
 
-$pkgJsonPath = $root . '/packages/sitepackage/composer.json';
+$pkgJsonPath = $root . '/packages/t3kit-sitepackage/composer.json';
 $pkg = json_decode(file_get_contents($pkgJsonPath), true);
 $pkg['version'] = 'dev-local';
 file_put_contents($pkgJsonPath, json_encode($pkg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
 $composerJsonPath = $root . '/composer.json';
 $json = json_decode(file_get_contents($composerJsonPath), true);
-$json['require']['conn/sitepackage'] = 'dev-local';
+$json['require']['conn/t3kit-sitepackage'] = 'dev-local';
 $json['repositories'] = array_values(array_filter(
     $json['repositories'],
     fn($r) => !($r['type'] === 'vcs' && str_contains($r['url'], 'sitepackage'))
 ));
 file_put_contents($composerJsonPath, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
-echo "    packages/sitepackage/composer.json → version: dev-local\n";
-echo "    composer.json → conn/sitepackage dev-local, VCS repo removed\n";
+echo "    packages/t3kit-sitepackage/composer.json → version: dev-local\n";
+echo "    composer.json → conn/t3kit-sitepackage dev-local, VCS repo removed\n";
 PHP
 
 echo ""
 
-# ── Step 6: Rewire composer to use packages/sitepackage ──────────────────────
-echo "==> [6/10] Updating Composer to use packages/sitepackage/ ..."
-ddev composer update conn/sitepackage --no-interaction
-echo "    Done. vendor/conn/sitepackage → symlink to packages/sitepackage/"
+# ── Step 6: Rewire composer to use packages/t3kit-sitepackage ──────────────────────
+echo "==> [6/10] Updating Composer to use packages/t3kit-sitepackage/ ..."
+ddev composer update conn/t3kit-sitepackage --no-interaction
+echo "    Done. vendor/conn/t3kit-sitepackage → symlink to packages/t3kit-sitepackage/"
 echo ""
 
 # ── Step 7: TYPO3 setup ──────────────────────────────────────────────────────
@@ -425,18 +425,18 @@ echo ""
 
 # ── Step 8: Build sitepackage styles (only when SCSS sources are present) ────
 echo "==> [8/10] Building sitepackage CSS..."
-if ddev exec bash -c "test -f /var/www/html/packages/sitepackage/package.json"; then
-    ddev exec bash -c "cd /var/www/html/packages/sitepackage && npm install && npm run build"
+if ddev exec bash -c "test -f /var/www/html/packages/t3kit-sitepackage/package.json"; then
+    ddev exec bash -c "cd /var/www/html/packages/t3kit-sitepackage && npm install && npm run build"
     echo "    Done."
 else
-    echo "    Skipped — packages/sitepackage/package.json not found."
+    echo "    Skipped — packages/t3kit-sitepackage/package.json not found."
     echo "    The sitepackage was installed from a dist archive (no SCSS build tools)."
     echo "    Pre-compiled CSS from the distribution will be used as-is."
 fi
 echo ""
 
 # ── Step 9: Warm caches — avoids a transient failure window on first visit ───
-# Right after extension:setup/composer settle packages/sitepackage as the
+# Right after extension:setup/composer settle packages/t3kit-sitepackage as the
 # local path package, the FIRST few frontend requests can hit a stale
 # TypoScript/Sets compile (e.g. EXT:form's FormFrontend template resolving to
 # the wrong root path until things settle) — crawling every page here forces
@@ -473,8 +473,8 @@ echo "  2. Log into TYPO3 backend — the root page (uid=1, site root) and the"
 echo "     'Seite nicht gefunden' page (uid=2, used as the 404 page) are"
 echo "     already in place, ready to fill with content"
 echo ""
-echo "  3. Customize packages/sitepackage/ to your needs,"
-echo "     rebuild CSS with: ddev exec 'cd /var/www/html/packages/sitepackage && npm run build'"
+echo "  3. Customize packages/t3kit-sitepackage/ to your needs,"
+echo "     rebuild CSS with: ddev exec 'cd /var/www/html/packages/t3kit-sitepackage && npm run build'"
 echo ""
 echo "  4. Before deploying, update:"
 echo "       deployer/deploy.php        (server hostname, user, path)"

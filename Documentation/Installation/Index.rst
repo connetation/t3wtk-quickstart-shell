@@ -34,7 +34,7 @@ project name/subdomain and renames things for you.
 2. Add Composer authentication — required
 ============================================
 
-``conn/base``, ``conn/elements`` and ``conn/sitepackage`` are installed
+``conn/t3kit-base``, ``conn/t3kit-elements`` and ``conn/t3kit-sitepackage`` are installed
 from the private Connetation Composer repository
 (``https://composer-v2.connetation.at/``), which requires authentication.
 Create :file:`auth.json` in the project root (it's gitignored, so it's
@@ -111,15 +111,15 @@ Then does the following in order:
    * - Step
      - What happens
    * - 1
-     - ``composer install`` — installs all dependencies including ``conn/sitepackage`` from VCS
+     - ``composer install`` — installs all dependencies including ``conn/t3kit-sitepackage`` from VCS
    * - 2
      - Creates :file:`public/fileadmin/`, :file:`var/`, :file:`translations/` directories
    * - 3
-     - Copies :file:`vendor/conn/sitepackage/` → :file:`packages/sitepackage/`, removes ``.git``
+     - Copies :file:`vendor/conn/t3kit-sitepackage/` → :file:`packages/t3kit-sitepackage/`, removes ``.git``
    * - 4
-     - Updates :file:`composer.json`: removes VCS sitepackage repo, sets ``conn/sitepackage: dev-local``
+     - Updates :file:`composer.json`: removes VCS sitepackage repo, sets ``conn/t3kit-sitepackage: dev-local``
    * - 5
-     - ``composer update conn/sitepackage`` — rewires vendor symlink to :file:`packages/sitepackage/`
+     - ``composer update conn/t3kit-sitepackage`` — rewires vendor symlink to :file:`packages/t3kit-sitepackage/`
    * - 6
      - ``typo3 setup`` — creates DB schema and admin user, then ``extension:setup`` + ``cache:flush``
    * - 7
@@ -141,9 +141,9 @@ for the project:
    git add -A
    git commit -m "Initial commit"
 
-From this point on, :file:`packages/sitepackage/` is fully owned by this
+From this point on, :file:`packages/t3kit-sitepackage/` is fully owned by this
 project. All customisations are committed here — no connection to the
-upstream ``conn/sitepackage`` VCS remains.
+upstream ``conn/t3kit-sitepackage`` VCS remains.
 
 .. _installation-first-login:
 
