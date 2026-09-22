@@ -14,4 +14,4 @@ footer.bar.right: navigation
 footer.layout: Minimal
 
 # Theme toggle
-themeToggle.enabled: true
+themeToggle.enabled: false
