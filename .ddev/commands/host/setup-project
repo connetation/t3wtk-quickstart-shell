@@ -35,6 +35,15 @@ while IFS= read -r conf_line; do
     LANG_OPTIONS+=("$conf_line")
 done < "$LANGUAGES_CONF"
 
+# Load the curated timezone menu (one IANA timezone per line, first = default)
+TIMEZONES_CONF="${SCRIPT_DIR}/timezones.conf"
+TIMEZONE_OPTIONS=()
+while IFS= read -r conf_line; do
+    conf_line="$(echo "$conf_line" | tr -d '[:space:]')"
+    [[ -z "$conf_line" || "$conf_line" == \#* ]] && continue
+    TIMEZONE_OPTIONS+=("$conf_line")
+done < "$TIMEZONES_CONF"
+
 echo ""
 echo "============================================"
 echo "  TYPO3 Project Setup"
@@ -105,6 +114,43 @@ ADMIN_PASSWORD="${ADMIN_PASSWORD:-Admin1234!}"
 
 read -rp "  Admin email    [admin@example.com]: " ADMIN_EMAIL
 ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}"
+
+# ── Timezone selection ─────────────────────────────────────────────────────────
+echo ""
+echo "  Available timezones (SYS/phpTimeZone, Europe/ prefix omitted):"
+CUSTOM_TZ_NUM=$((${#TIMEZONE_OPTIONS[@]} + 1))
+# Print the menu in 3 columns, filled top-to-bottom, so the long list stays compact
+TZ_MENU=("${TIMEZONE_OPTIONS[@]}" "Other (custom)")
+TZ_COLS=3
+TZ_ROWS=$(( (${#TZ_MENU[@]} + TZ_COLS - 1) / TZ_COLS ))
+for ((row = 0; row < TZ_ROWS; row++)); do
+    printf "  "
+    for ((col = 0; col < TZ_COLS; col++)); do
+        idx=$((col * TZ_ROWS + row))
+        [ "$idx" -lt "${#TZ_MENU[@]}" ] && printf "  %2d) %-22s" "$((idx + 1))" "${TZ_MENU[$idx]#Europe/}"
+    done
+    printf "\n"
+done
+echo ""
+read -rp "  Timezone [1]: " TZ_SELECTION
+TZ_SELECTION="$(echo "${TZ_SELECTION:-1}" | tr -d '[:space:]')"
+
+if [[ "$TZ_SELECTION" =~ ^[0-9]+$ ]] && [ "$TZ_SELECTION" -ge 1 ] && [ "$TZ_SELECTION" -le "${#TIMEZONE_OPTIONS[@]}" ]; then
+    PHP_TIMEZONE="${TIMEZONE_OPTIONS[$((TZ_SELECTION - 1))]}"
+elif [ "$TZ_SELECTION" = "$CUSTOM_TZ_NUM" ]; then
+    read -rp "    IANA timezone (e.g. America/New_York): " PHP_TIMEZONE
+    PHP_TIMEZONE="$(echo "$PHP_TIMEZONE" | tr -d '[:space:]')"
+    if ! [[ "$PHP_TIMEZONE" =~ ^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)*$ ]] \
+        || { [ -d /usr/share/zoneinfo ] && [ ! -f "/usr/share/zoneinfo/${PHP_TIMEZONE}" ]; }; then
+        echo ""
+        echo "  ✗ Invalid timezone: '${PHP_TIMEZONE}'"
+        exit 1
+    fi
+else
+    echo ""
+    echo "  ✗ Invalid timezone selection: '${TZ_SELECTION}'"
+    exit 1
+fi
 
 # ── Language selection ─────────────────────────────────────────────────────────
 echo ""
@@ -218,6 +264,7 @@ echo "  Site title : ${SITE_TITLE}"
 echo "  URL        : ${DDEV_URL}"
 echo "  Composer   : ${COMPOSER_NAME}"
 echo "  Languages  : ${LANG_SUMMARY}"
+echo "  Timezone   : ${PHP_TIMEZONE}"
 echo "  Username   : ${ADMIN_USER}"
 echo "  Email      : ${ADMIN_EMAIL}"
 echo ""
@@ -421,6 +468,11 @@ echo ""
 echo "==>       Setting trusted hosts pattern for DDEV..."
 ddev exec vendor/bin/typo3 configuration:set SYS/trustedHostsPattern ".+\.ddev\.site"
 echo "    Done."
+echo ""
+
+echo "==>       Setting PHP timezone..."
+ddev exec vendor/bin/typo3 configuration:set SYS/phpTimeZone "${PHP_TIMEZONE}"
+echo "    SYS/phpTimeZone → ${PHP_TIMEZONE}"
 echo ""
 
 # ── Step 8: Build sitepackage styles (only when SCSS sources are present) ────
