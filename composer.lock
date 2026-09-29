@@ -557,11 +557,11 @@
         },
         {
             "name": "conn/t3kit-base",
-            "version": "2.1.1",
+            "version": "2.1.9",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/toolkit/t3kit-base.git",
-                "reference": "edb02383199bfff06cfb10f66510ef4a0d29dfeb"
+                "reference": "1a98b43df3463ca281d82901ec845ad7ac8fa280"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -588,11 +588,11 @@
         },
         {
             "name": "conn/t3kit-elements",
-            "version": "2.2.4",
+            "version": "2.2.7",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/toolkit/t3kit-elements.git",
-                "reference": "ccef5ae68ae1aff03b9ab36a0c0aa1c3dfbf234e"
+                "reference": "d083930d49b017d2ae800afc0297dba824997e87"
             },
             "require": {
                 "b13/container": "^3.2",
@@ -619,16 +619,16 @@
         },
         {
             "name": "conn/t3kit-sitepackage",
-            "version": "2.0.2",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:connetation/toolkit/t3kit-sitepackage.git",
-                "reference": "d44383467f68321aafeb21e06309c820f0e6a760"
+                "reference": "80d211240d9dd9f5d88e7b641bd1d16d6aba5ccf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Ftoolkit%2Ft3kit-sitepackage/repository/archive.zip?sha=d44383467f68321aafeb21e06309c820f0e6a760",
-                "reference": "d44383467f68321aafeb21e06309c820f0e6a760",
+                "url": "https://gitlab.com/api/v4/projects/connetation%2Ftoolkit%2Ft3kit-sitepackage/repository/archive.zip?sha=80d211240d9dd9f5d88e7b641bd1d16d6aba5ccf",
+                "reference": "80d211240d9dd9f5d88e7b641bd1d16d6aba5ccf",
                 "shasum": ""
             },
             "require": {
@@ -658,10 +658,10 @@
             ],
             "description": "Connetation Sitepackage – site-specific extension built on conn/t3kit-base for TYPO3 LTS 14",
             "support": {
-                "source": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/tree/2.0.2",
+                "source": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/tree/2.0.4",
                 "issues": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/issues"
             },
-            "time": "2026-09-21T09:34:50+02:00"
+            "time": "2026-09-29T08:47:02+02:00"
         },
         {
             "name": "dasprid/enum",
@@ -1126,16 +1126,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v7.2.0",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/php-jwt.git",
-                "reference": "f502cdbf279cd7532060b041f7c22a05208c0b93"
+                "reference": "0501f5729b9e2448516674aff07c7d1727869b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/f502cdbf279cd7532060b041f7c22a05208c0b93",
-                "reference": "f502cdbf279cd7532060b041f7c22a05208c0b93",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/0501f5729b9e2448516674aff07c7d1727869b8e",
+                "reference": "0501f5729b9e2448516674aff07c7d1727869b8e",
                 "shasum": ""
             },
             "require": {
@@ -1194,9 +1194,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/php-jwt/issues",
-                "source": "https://github.com/googleapis/php-jwt/tree/v7.2.0"
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.2.1"
             },
-            "time": "2026-09-21T19:29:58+00:00"
+            "time": "2026-09-28T17:51:46+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1840,16 +1840,16 @@
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "327a05bbee54120d4786a0dc67aad30226ad4cf9"
+                "reference": "dbe2133bb23e2e33a6834f4ed417f24a1b167769"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/327a05bbee54120d4786a0dc67aad30226ad4cf9",
-                "reference": "327a05bbee54120d4786a0dc67aad30226ad4cf9",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/dbe2133bb23e2e33a6834f4ed417f24a1b167769",
+                "reference": "dbe2133bb23e2e33a6834f4ed417f24a1b167769",
                 "shasum": ""
             },
             "require": {
@@ -1892,9 +1892,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/2.0.0"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/2.1.0"
             },
-            "time": "2026-01-06T21:53:42+00:00"
+            "time": "2026-09-27T19:32:54+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
