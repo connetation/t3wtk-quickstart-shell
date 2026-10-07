@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37fea18c4ad6465631da134799ef98a0",
+    "content-hash": "0583390f88334f44d2ee5747740be066",
     "packages": [
         {
             "name": "b13/container",
@@ -480,16 +480,16 @@
         },
         {
             "name": "composer/semver",
-            "version": "3.5.0",
+            "version": "3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "f7a296f4c4cf8cb8bb83e35d6951a406bb11afa5"
+                "reference": "528948210cc46f967a4b98e83b19e76f2b504993"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/f7a296f4c4cf8cb8bb83e35d6951a406bb11afa5",
-                "reference": "f7a296f4c4cf8cb8bb83e35d6951a406bb11afa5",
+                "url": "https://api.github.com/repos/composer/semver/zipball/528948210cc46f967a4b98e83b19e76f2b504993",
+                "reference": "528948210cc46f967a4b98e83b19e76f2b504993",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +541,7 @@
             "support": {
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/semver/issues",
-                "source": "https://github.com/composer/semver/tree/3.5.0"
+                "source": "https://github.com/composer/semver/tree/3.5.1"
             },
             "funding": [
                 {
@@ -553,15 +553,15 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-24T14:38:51+00:00"
+            "time": "2026-10-05T13:12:12+00:00"
         },
         {
-            "name": "conn/t3kit-base",
-            "version": "2.3.1",
+            "name": "connetation/t3wtk-base",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/toolkit/t3kit-base.git",
-                "reference": "02bf39683e6806e1cd4b7f90e5a6bb699fd3a0e0"
+                "reference": "800439293d72d43196ee62dd28cd91acbd19e79d"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -570,73 +570,96 @@
                 "typo3/cms-fluid-styled-content": "^14.0",
                 "typo3/cms-frontend": "^14.0"
             },
+            "replace": {
+                "conn/t3kit-base": "self.version"
+            },
             "type": "typo3-cms-extension",
             "extra": {
                 "typo3/cms": {
-                    "extension-key": "conn_t3kit_base"
+                    "extension-key": "conn_t3wtk_base"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Connetation\\T3kitBase\\": "Classes/"
+                    "Connetation\\T3wtkBase\\": "Classes/"
                 }
             },
             "license": [
                 "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Connetation Web Engineering GmbH",
+                    "email": "office@connetation.at",
+                    "homepage": "https://www.connetation.at/"
+                }
             ],
             "description": "Connetation Base for TYPO3 LTS 14 with Bootstrap 5, light/dark theme"
         },
         {
-            "name": "conn/t3kit-elements",
-            "version": "2.2.10",
+            "name": "connetation/t3wtk-elements",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/toolkit/t3kit-elements.git",
-                "reference": "435964b93d4658721d87b7fda63bd1f11146aa82"
+                "reference": "343c1199257d3c3f1224d59b40f8e6cc724654ed"
             },
             "require": {
                 "b13/container": "^3.2",
-                "conn/t3kit-base": "^2.0.0",
+                "connetation/t3wtk-base": "^3.0.0",
                 "typo3/cms-core": "^14.0",
                 "typo3/cms-fluid": "^14.0",
                 "typo3/cms-frontend": "^14.0"
             },
+            "replace": {
+                "conn/t3kit-elements": "self.version"
+            },
             "type": "typo3-cms-extension",
             "extra": {
                 "typo3/cms": {
-                    "extension-key": "conn_t3kit_elements"
+                    "extension-key": "conn_t3wtk_elements"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Connetation\\T3kitElements\\": "Classes/"
+                    "Connetation\\T3wtkElements\\": "Classes/"
                 }
             },
             "license": [
                 "GPL-2.0-or-later"
             ],
+            "authors": [
+                {
+                    "name": "Connetation Web Engineering GmbH",
+                    "email": "office@connetation.at",
+                    "homepage": "https://www.connetation.at/"
+                }
+            ],
             "description": "Connetation Content Elements for TYPO3 LTS 14"
         },
         {
-            "name": "conn/t3kit-sitepackage",
-            "version": "2.1.0",
+            "name": "connetation/t3wtk-sitepackage",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:connetation/toolkit/t3kit-sitepackage.git",
-                "reference": "22824b8ae982decb56aa61ab6e350edbf3dd4968"
+                "reference": "98db81eb8e8aa13bddf4cbef7ed4595ce759dacd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Ftoolkit%2Ft3kit-sitepackage/repository/archive.zip?sha=22824b8ae982decb56aa61ab6e350edbf3dd4968",
-                "reference": "22824b8ae982decb56aa61ab6e350edbf3dd4968",
+                "url": "https://gitlab.com/api/v4/projects/connetation%2Ftoolkit%2Ft3kit-sitepackage/repository/archive.zip?sha=a29c6b5f94e6679031be4e39a20a426838825cd6",
+                "reference": "a29c6b5f94e6679031be4e39a20a426838825cd6",
                 "shasum": ""
             },
             "require": {
                 "baschte/content-animations": "^2.7",
                 "clickstorm/cs-seo": "^10.2",
-                "conn/t3kit-base": "^2.0.0",
-                "conn/t3kit-elements": "^2.0.0",
+                "connetation/t3wtk-base": "^3.0.0",
+                "connetation/t3wtk-elements": "^3.0.0",
                 "typo3/cms-core": "^14.0"
+            },
+            "replace": {
+                "conn/t3kit-sitepackage": "self.version"
             },
             "suggest": {
                 "derhansen/sf_event_mgt": "Enables the cs_seo integration in Configuration/CsSeo/events.yaml",
@@ -645,23 +668,30 @@
             "type": "typo3-cms-extension",
             "extra": {
                 "typo3/cms": {
-                    "extension-key": "conn_t3kit_sitepackage"
+                    "extension-key": "conn_t3wtk_sitepackage"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Connetation\\T3kitSitepackage\\": "Classes/"
+                    "Connetation\\T3wtkSitepackage\\": "Classes/"
                 }
             },
             "license": [
                 "GPL-2.0-or-later"
             ],
-            "description": "Connetation Sitepackage – site-specific extension built on conn/t3kit-base for TYPO3 LTS 14",
+            "authors": [
+                {
+                    "name": "Connetation Web Engineering GmbH",
+                    "email": "office@connetation.at",
+                    "homepage": "https://www.connetation.at/"
+                }
+            ],
+            "description": "Connetation Sitepackage – site-specific extension built on connetation/t3wtk-base for TYPO3 LTS 14",
             "support": {
-                "source": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/tree/2.1.0",
+                "source": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/tree/3.0.0",
                 "issues": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/issues"
             },
-            "time": "2026-09-30T13:53:38+02:00"
+            "time": "2026-10-06T14:18:31+02:00"
         },
         {
             "name": "dasprid/enum",
@@ -8516,16 +8546,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "2.4.1",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "2ccb7c2e821038c03a3e6e1700c570c158c55f70"
+                "reference": "8a163706bbcac613733dba03f51e13b5eb1bb819"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/2ccb7c2e821038c03a3e6e1700c570c158c55f70",
-                "reference": "2ccb7c2e821038c03a3e6e1700c570c158c55f70",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/8a163706bbcac613733dba03f51e13b5eb1bb819",
+                "reference": "8a163706bbcac613733dba03f51e13b5eb1bb819",
                 "shasum": ""
             },
             "require": {
@@ -8576,9 +8606,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/2.4.1"
+                "source": "https://github.com/webmozarts/assert/tree/2.5.0"
             },
-            "time": "2026-06-15T15:31:57+00:00"
+            "time": "2026-10-05T23:14:19+00:00"
         }
     ],
     "packages-dev": [],

@@ -17,6 +17,6 @@ corepack_enable: false
 
 hooks:
   post-start:
-    - exec: "cd /var/www/html/vendor/conn/t3kit-base && npm install && npm run build"
-    - exec: "cd /var/www/html/vendor/conn/t3kit-elements && npm install && npm run build"
-    - exec: "if [ -f /var/www/html/packages/t3kit-sitepackage/package.json ]; then cd /var/www/html/packages/t3kit-sitepackage && npm install && npm run build; fi"
+    - exec: "cd /var/www/html/vendor/connetation/t3wtk-base && npm install && npm run build"
+    - exec: "cd /var/www/html/vendor/connetation/t3wtk-elements && npm install && npm run build"
+    - exec: "if [ -f /var/www/html/packages/t3wtk-sitepackage/package.json ]; then cd /var/www/html/packages/t3wtk-sitepackage && npm install && npm run build; fi"

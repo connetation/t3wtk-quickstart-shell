@@ -14,15 +14,15 @@
             "php": "8.3.0"
         },
         "preferred-install": {
-            "conn/t3kit-sitepackage": "source"
+            "connetation/t3wtk-sitepackage": "source"
         },
         "sort-packages": true
     },
     "require": {
         "b13/container": "^3.2",
-        "conn/t3kit-base": "^2.0.0",
-        "conn/t3kit-elements": "^2.0.0",
-        "conn/t3kit-sitepackage": "^2.0.0",
+        "connetation/t3wtk-base": "^3.0.0",
+        "connetation/t3wtk-elements": "^3.0.0",
+        "connetation/t3wtk-sitepackage": "^3.0.0",
         "typo3/cms-adminpanel": "^14.3",
         "typo3/cms-backend": "^14.3",
         "typo3/cms-belog": "^14.3",
@@ -67,7 +67,7 @@
         {
             "type": "composer",
             "url": "https://composer-v2.connetation.at/",
-            "exclude": ["conn/t3kit-sitepackage"]
+            "exclude": ["connetation/t3wtk-sitepackage"]
         },
         {
             "type": "composer",

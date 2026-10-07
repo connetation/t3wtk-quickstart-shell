@@ -46,6 +46,15 @@ rsync -azL \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/settings.yaml" \
     "$LOCAL_DIR/"
 
+# A remote that still runs t3kit hands back the old Site Set names and EXT: paths —
+# rewrite them to t3wtk so the pulled config matches this codebase (no-op otherwise).
+# Same replacements as the connT3wtkBaseMigrateFromT3kit upgrade wizard; runs in the
+# web container so GNU sed is used regardless of the host OS.
+ddev exec bash -s << 'BASH'
+sed -i -E 's#conn/t3kit-#connetation/t3wtk-#g; s#\bconn/(news|events)\b#connetation/\1#g; s/conn_t3kit_/conn_t3wtk_/g; s/Connetation\\T3kit/Connetation\\T3wtk/g' \
+    /var/www/html/config/sites/sitepackage/config.yaml /var/www/html/config/sites/sitepackage/settings.yaml
+BASH
+
 echo "Synced:"
 echo "  $LOCAL_DIR/config.yaml"
 echo "  $LOCAL_DIR/settings.yaml"

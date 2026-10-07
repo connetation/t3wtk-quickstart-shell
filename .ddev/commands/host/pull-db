@@ -94,3 +94,7 @@ fi
 
 echo "Saved to: $OUTFILE"
 echo "Import with: ddev import-db --file=$OUTFILE"
+echo "If $ENVIRONMENT still runs t3kit (tx_conn_t3kit_* tables), migrate it after importing:"
+echo "  ddev exec vendor/bin/typo3 cache:flush"
+echo "  ddev exec vendor/bin/typo3 upgrade:run connT3wtkBaseMigrateFromT3kit"
+echo "  ddev exec vendor/bin/typo3 extension:setup"
