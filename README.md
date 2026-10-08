@@ -24,8 +24,6 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 
 ```
 .
-├── auth.json                         Composer credentials for the private Connetation repo
-│                                     (gitignored — create manually, see "Starting a new project")
 ├── .ddev/
 │   ├── config.yaml                   DDEV settings (name: set interactively by setup-project)
 │   └── commands/host/
@@ -59,12 +57,12 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 ### 1. Clone
 
 ```bash
-git clone <this-repo> my-project.com
+git clone https://github.com/connetation/t3wtk-quickstart-shell.git my-project.com
 cd my-project.com
 ```
 
 There's no need to manually edit `.ddev/config.yaml` or `composer.json` —
-`ddev setup-project` (step 3) prompts for the project name/subdomain and
+`ddev setup-project` (step 2) prompts for the project name/subdomain and
 renames things for you.
 
 > **Watch out for name collisions:** this repo's `.ddev/config.yaml` ships with
@@ -74,28 +72,7 @@ renames things for you.
 > check for a clash, then `ddev stop <old-name>` (or `ddev delete <old-name>`
 > to remove it entirely) before continuing.
 
-### 2. Add Composer authentication — **required**
-
-`connetation/t3wtk-base`, `connetation/t3wtk-elements` and `connetation/t3wtk-sitepackage` are installed from the
-private Connetation Composer repository (`https://composer-v2.connetation.at/`),
-which requires authentication. Create `auth.json` in the project root
-(it's gitignored, so it's never committed):
-
-```json
-{
-    "http-basic": {
-        "composer-v2.connetation.at": {
-            "username": "your-username",
-            "password": "your-password"
-        }
-    }
-}
-```
-
-Contact Connetation if you don't have access credentials. `ddev setup-project`
-checks for this file and refuses to run without it.
-
-### 3. Run setup (once)
+### 2. Run setup (once)
 
 ```bash
 ddev setup-project
@@ -126,16 +103,16 @@ Then does the following in order:
 
 | Step | What happens |
 |------|-------------|
-| 1 | `composer install` — installs all dependencies including `connetation/t3wtk-sitepackage` from VCS |
+| 1 | `composer install` — installs all dependencies including `connetation/t3wtk-sitepackage` (as git source) from Packagist |
 | 2 | Creates `public/fileadmin/`, `var/`, `translations/` directories |
 | 3 | Copies `vendor/connetation/t3wtk-sitepackage/` → `packages/t3wtk-sitepackage/`, removes `.git` |
-| 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `connetation/t3wtk-sitepackage: dev-local` |
+| 4 | Updates `composer.json`: sets `connetation/t3wtk-sitepackage: dev-local` |
 | 5 | `composer update connetation/t3wtk-sitepackage` — rewires vendor symlink to `packages/t3wtk-sitepackage/` |
 | 6 | `typo3 setup` — creates DB schema and admin user, then `extension:setup` + `cache:flush` |
 | 7 | Builds sitepackage CSS (`npm install && npm run build`) — skipped if installed from dist archive |
 | 8 | Removes the template's `.git` history and runs `git init` — your project starts from a clean slate |
 
-### 4. Create your initial commit
+### 3. Create your initial commit
 
 setup-project wipes the template's `.git` history and reinitializes an empty repository, so nothing is committed yet. Make your first commit for the project:
 
@@ -144,9 +121,9 @@ git add -A
 git commit -m "Initial commit"
 ```
 
-From this point on, `packages/t3wtk-sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `connetation/t3wtk-sitepackage` VCS remains.
+From this point on, `packages/t3wtk-sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `connetation/t3wtk-sitepackage` repository remains.
 
-### 5. First login
+### 4. First login
 
 Open `https://<project-name>.ddev.site/typo3`
 

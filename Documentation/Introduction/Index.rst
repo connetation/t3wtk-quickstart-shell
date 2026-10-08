@@ -14,8 +14,6 @@ Project structure
 ::
 
    .
-   ├── auth.json                         Composer credentials for the private Connetation repo
-   │                                     (gitignored — create manually, see Installation)
    ├── .ddev/
    │   ├── config.yaml                   DDEV settings (name: set interactively by setup-project)
    │   └── commands/host/

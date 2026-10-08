@@ -1,7 +1,12 @@
 {
-    "name": "your-vendor/your-project",
-    "description": "TYPO3 14 project built on Connetation base packages",
+    "name": "connetation/t3wtk-quickstart-shell",
+    "description": "DDEV quickstart for TYPO3 14 projects built on the Connetation TYPO3 Web Toolkit (base, elements, sitepackage)",
     "license": "GPL-2.0-or-later",
+    "homepage": "https://github.com/connetation/t3wtk-quickstart-shell",
+    "support": {
+        "issues": "https://github.com/connetation/t3wtk-quickstart-shell/issues",
+        "source": "https://github.com/connetation/t3wtk-quickstart-shell"
+    },
     "type": "project",
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -20,9 +25,9 @@
     },
     "require": {
         "b13/container": "^3.2",
-        "connetation/t3wtk-base": "^3.0.10",
-        "connetation/t3wtk-elements": "^3.0.9",
-        "connetation/t3wtk-sitepackage": "^3.0.0",
+        "connetation/t3wtk-base": "^3.1.1",
+        "connetation/t3wtk-elements": "^3.1.1",
+        "connetation/t3wtk-sitepackage": "^3.1.1",
         "typo3/cms-adminpanel": "^14.3",
         "typo3/cms-backend": "^14.3",
         "typo3/cms-belog": "^14.3",
@@ -59,15 +64,6 @@
         {
             "type": "path",
             "url": "packages/*"
-        },
-        {
-            "type": "vcs",
-            "url": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage.git"
-        },
-        {
-            "type": "composer",
-            "url": "https://composer-v2.connetation.at/",
-            "exclude": ["connetation/t3wtk-sitepackage"]
         },
         {
             "type": "composer",

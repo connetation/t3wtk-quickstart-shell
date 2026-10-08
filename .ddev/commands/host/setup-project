@@ -56,31 +56,6 @@ echo "    to the template's remote. Make sure any work here is already"
 echo "    pushed/backed up elsewhere before continuing."
 echo ""
 
-# ── Verify Composer authentication is in place ────────────────────────────────
-if [ ! -f "$(pwd)/auth.json" ]; then
-    echo "  ✗ auth.json not found in project root."
-    echo ""
-    echo "    This project installs connetation/t3wtk-base, connetation/t3wtk-elements and connetation/t3wtk-sitepackage"
-    echo "    from the private Connetation Composer repository"
-    echo "    (https://composer-v2.connetation.at/), which requires authentication."
-    echo ""
-    echo "    Create auth.json in the project root before running this command:"
-    echo ""
-    echo '      {'
-    echo '          "http-basic": {'
-    echo '              "composer-v2.connetation.at": {'
-    echo '                  "username": "your-username",'
-    echo '                  "password": "your-password"'
-    echo '              }'
-    echo '          }'
-    echo '      }'
-    echo ""
-    echo "    Contact Connetation if you don't have access credentials."
-    echo "    (auth.json is gitignored — it will never be committed.)"
-    echo ""
-    exit 1
-fi
-
 # ── Interactive prompts ───────────────────────────────────────────────────────
 read -rp "  Project name   [${DEFAULT_SITE_TITLE}]: " SITE_TITLE
 SITE_TITLE="${SITE_TITLE:-$DEFAULT_SITE_TITLE}"
@@ -373,7 +348,7 @@ $json['repositories'] = array_values(array_filter(
 file_put_contents($composerJsonPath, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 
 echo "    packages/t3wtk-sitepackage/composer.json → version: dev-local\n";
-echo "    composer.json → connetation/t3wtk-sitepackage dev-local, VCS repo removed\n";
+echo "    composer.json → connetation/t3wtk-sitepackage dev-local\n";
 PHP
 
 echo ""

@@ -7,7 +7,7 @@ TYPO3 14 Project Template
 =========================
 
 :Package name:
-   your-vendor/your-project *(rename after cloning — see* :ref:`installation` *)*
+   connetation/t3wtk-quickstart-shell *(renamed by* ``ddev setup-project`` *— see* :ref:`installation` *)*
 
 :Version:
    |release|
