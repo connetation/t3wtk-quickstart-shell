@@ -20,8 +20,8 @@
     },
     "require": {
         "b13/container": "^3.2",
-        "connetation/t3wtk-base": "^3.0.0",
-        "connetation/t3wtk-elements": "^3.0.0",
+        "connetation/t3wtk-base": "^3.0.10",
+        "connetation/t3wtk-elements": "^3.0.9",
         "connetation/t3wtk-sitepackage": "^3.0.0",
         "typo3/cms-adminpanel": "^14.3",
         "typo3/cms-backend": "^14.3",

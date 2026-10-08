@@ -6,8 +6,8 @@
 Content Elements
 ================
 
-Scaffolds a new content element in :file:`packages/t3kit-sitepackage`'s
-``conn/t3kit-elements`` dependency, generating every required file and patching
+Scaffolds a new content element in :file:`packages/t3wtk-sitepackage`'s
+``connetation/t3wtk-elements`` dependency, generating every required file and patching
 all registration files automatically.
 
 .. _content-elements-prerequisites:
@@ -17,7 +17,7 @@ Prerequisites
 
 - ``ddev setup-project`` has been run (project is installed, ``ddev
   start`` is running)
-- ``conn/t3kit-elements`` is required in :file:`composer.json` and listed under
+- ``connetation/t3wtk-elements`` is required in :file:`composer.json` and listed under
   ``dependencies`` in :file:`config/sites/sitepackage/config.yaml`
 - Node.js available inside the DDEV web container (default — no local
   Node.js needed)
@@ -70,7 +70,7 @@ What gets generated
      - Display settings form
    * - ``Configuration/TypoScript/ContentElements/<Name>.typoscript``
      - Frontend rendering setup
-   * - ``Configuration/TCA/tx_conn_t3kit_elements_domain_model_<name>_item.php``
+   * - ``Configuration/TCA/tx_conn_t3wtk_elements_domain_model_<name>_item.php``
      - Child record TCA (with-items only)
    * - ``Classes/DataProcessing/<Name>ItemsProcessor.php``
      - DB query + FlexForm resolver (with-items only)
@@ -113,7 +113,7 @@ backend.
 
    .. code-block:: bash
 
-      ddev exec "cd /var/www/html/vendor/conn/t3kit-elements && npm run build"
+      ddev exec "cd /var/www/html/vendor/connetation/t3wtk-elements && npm run build"
 
 #. **Flush TYPO3 caches** — so TYPO3 picks up the new TCA and SQL
    definitions. Admin Tools → Maintenance → Flush all caches.
@@ -133,7 +133,7 @@ Customising the generated element
 - **FlexForm** — edit :file:`Configuration/FlexForms/<Name>.xml` to
   add/change display settings.
 - **Child record fields** — extend
-  :file:`Configuration/TCA/tx_conn_t3kit_elements_domain_model_<name>_item.php`
+  :file:`Configuration/TCA/tx_conn_t3wtk_elements_domain_model_<name>_item.php`
   and :file:`ext_tables.sql`, then re-run DB analysis.
 - **Data Processor** — extend ``resolveSettings()`` and ``$rows``
   enrichment in the generated processor.
@@ -145,5 +145,5 @@ Customising the generated element
 - **Icon** — replace :file:`Resources/Public/Icons/<name>-ce.svg` with
   your SVG (16×16 viewBox recommended).
 
-To override an already-generated element from :file:`packages/t3kit-sitepackage`
-instead of editing ``conn/t3kit-elements`` directly, see :ref:`extending-elements`.
+To override an already-generated element from :file:`packages/t3wtk-sitepackage`
+instead of editing ``connetation/t3wtk-elements`` directly, see :ref:`extending-elements`.

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0583390f88334f44d2ee5747740be066",
+    "content-hash": "9e62281cd82e6e53c5fc8025adb3bc75",
     "packages": [
         {
             "name": "b13/container",
@@ -557,11 +557,11 @@
         },
         {
             "name": "connetation/t3wtk-base",
-            "version": "3.0.1",
+            "version": "3.0.10",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/toolkit/t3kit-base.git",
-                "reference": "800439293d72d43196ee62dd28cd91acbd19e79d"
+                "reference": "48446950768b1067ac57f7b73580d3c0bb4e88ac"
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -598,15 +598,15 @@
         },
         {
             "name": "connetation/t3wtk-elements",
-            "version": "3.0.1",
+            "version": "3.0.9",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/connetation/toolkit/t3kit-elements.git",
-                "reference": "343c1199257d3c3f1224d59b40f8e6cc724654ed"
+                "reference": "fb0f09c032b412d604397c11a785a159de46de9e"
             },
             "require": {
                 "b13/container": "^3.2",
-                "connetation/t3wtk-base": "^3.0.0",
+                "connetation/t3wtk-base": "^3.0.6",
                 "typo3/cms-core": "^14.0",
                 "typo3/cms-fluid": "^14.0",
                 "typo3/cms-frontend": "^14.0"

@@ -3,9 +3,9 @@
 base: 'https://your-project.ddev.site/'
 baseVariants: []
 dependencies:
-  - conn/t3kit-sitepackage
-  - conn/t3kit-elements
-  - conn/t3kit-base
+  - connetation/t3wtk-sitepackage
+  - connetation/t3wtk-elements
+  - connetation/t3wtk-base
   - typo3/seo-sitemap
   - clickstorm/cs-seo
   - baschte/content-animations

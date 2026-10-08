@@ -1,11 +1,11 @@
 # Creating a New Content Element
 
-Scaffolds a new content element in `packages/t3kit-sitepackage`'s `conn/t3kit-elements` dependency, generating every required file and patching all registration files automatically.
+Scaffolds a new content element in `packages/t3wtk-sitepackage`'s `connetation/t3wtk-elements` dependency, generating every required file and patching all registration files automatically.
 
 ## Prerequisites
 
 - `ddev setup-project` has been run (project is installed, `ddev start` is running)
-- `conn/t3kit-elements` is required in `composer.json` and listed under `dependencies` in `config/sites/sitepackage/config.yaml`
+- `connetation/t3wtk-elements` is required in `composer.json` and listed under `dependencies` in `config/sites/sitepackage/config.yaml`
 - Node.js available inside the DDEV web container (default — no local Node.js needed)
 
 ## What to run
@@ -36,7 +36,7 @@ It asks three questions:
 |------|---------|
 | `Configuration/FlexForms/<Name>.xml` | Display settings form |
 | `Configuration/TypoScript/ContentElements/<Name>.typoscript` | Frontend rendering setup |
-| `Configuration/TCA/tx_conn_t3kit_elements_domain_model_<name>_item.php` | Child record TCA (with-items only) |
+| `Configuration/TCA/tx_conn_t3wtk_elements_domain_model_<name>_item.php` | Child record TCA (with-items only) |
 | `Classes/DataProcessing/<Name>ItemsProcessor.php` | DB query + FlexForm resolver (with-items only) |
 | `Resources/Private/Templates/ContentElements/<Name>.html` | Main Fluid template |
 | `Resources/Private/Partials/<Name>/Item.html` | Item partial (with-items only) |
@@ -60,7 +60,7 @@ These steps must be done **in order** — skipping or reordering them causes an 
 **1. Build assets**
 
 ```bash
-ddev exec "cd /var/www/html/vendor/conn/t3kit-elements && npm run build"
+ddev exec "cd /var/www/html/vendor/connetation/t3wtk-elements && npm run build"
 ```
 
 **2. Flush TYPO3 caches** — so TYPO3 picks up the new TCA and SQL definitions
@@ -78,11 +78,11 @@ Skipping this step leaves the new column missing from the database, which causes
 ## Customising the generated element
 
 - **FlexForm** — edit `Configuration/FlexForms/<Name>.xml` to add/change display settings
-- **Child record fields** — extend `Configuration/TCA/tx_conn_t3kit_elements_domain_model_<name>_item.php` and `ext_tables.sql`, then re-run DB analysis
+- **Child record fields** — extend `Configuration/TCA/tx_conn_t3wtk_elements_domain_model_<name>_item.php` and `ext_tables.sql`, then re-run DB analysis
 - **Data Processor** — extend `resolveSettings()` and `$rows` enrichment in the generated processor
 - **Template** — edit the Fluid template and partial freely
 - **SCSS** — edit `_<name>.scss`; uses `var(--conn-*)` design tokens for consistent theming
 - **TypeScript** — edit `<name>.ts`; the `registry.register()` call at the bottom wires it to the DOM
 - **Icon** — replace `Resources/Public/Icons/<name>-ce.svg` with your SVG (16×16 viewBox recommended)
 
-To override an already-generated element from `packages/t3kit-sitepackage` instead of editing `conn/t3kit-elements` directly, see [extend-elements.md](extend-elements.md).
+To override an already-generated element from `packages/t3wtk-sitepackage` instead of editing `connetation/t3wtk-elements` directly, see [extend-elements.md](extend-elements.md).

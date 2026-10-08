@@ -36,8 +36,8 @@ TYPO3 14 Project Template
    distribution model as ``typo3/cms-base-distribution``.
 
 A TYPO3 14 LTS project template built on
-`Connetation <https://connetation.at>`__ base packages (``conn/t3kit-base``,
-``conn/t3kit-elements``, ``conn/t3kit-sitepackage``). Run ``ddev setup-project`` and
+`Connetation <https://connetation.at>`__ base packages (``connetation/t3wtk-base``,
+``connetation/t3wtk-elements``, ``connetation/t3wtk-sitepackage``). Run ``ddev setup-project`` and
 get a working, fully-wired TYPO3 v14 instance in minutes.
 
 .. _stack:
@@ -48,7 +48,7 @@ Stack
 - TYPO3 14 LTS
 - PHP 8.3+
 - MariaDB 10.11+
-- Bootstrap 5 (via ``conn/t3kit-base``)
+- Bootstrap 5 (via ``connetation/t3wtk-base``)
 - Light/dark theme toggle
 - DDEV for local development
 - Deployer + GitLab CI/CD for deployment

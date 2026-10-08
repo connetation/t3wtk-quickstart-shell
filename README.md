@@ -1,13 +1,13 @@
 # TYPO3 14 Project Template
 
-A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) base packages (`conn/t3kit-base`, `conn/t3kit-elements`, `conn/t3kit-sitepackage`).
+A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) base packages (`connetation/t3wtk-base`, `connetation/t3wtk-elements`, `connetation/t3wtk-sitepackage`).
 
 ## Stack
 
 - TYPO3 14 LTS
 - PHP 8.3+
 - MariaDB 10.11+
-- Bootstrap 5 (via `conn/t3kit-base`)
+- Bootstrap 5 (via `connetation/t3wtk-base`)
 - Light/dark theme toggle
 - DDEV for local development
 - Deployer + GitLab CI/CD for deployment
@@ -15,9 +15,9 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 ## Documentation
 
 - [Create a new content element](docs/create-new-element.md) — running `ddev make-element`, what gets generated, required post-scaffold steps
-- [Overwrite / extend conn/t3kit-elements](docs/extend-elements.md)
-- [Overwrite / extend conn/t3kit-news](docs/extend-news.md)
-- [Overwrite / extend conn/t3kit-events](docs/extend-events.md)
+- [Overwrite / extend connetation/t3wtk-elements](docs/extend-elements.md)
+- [Overwrite / extend connetation/news](docs/extend-news.md)
+- [Overwrite / extend connetation/events](docs/extend-events.md)
 - [Contact forms (EXT:form)](docs/forms.md) — the bundled Contact form, adding new forms/fields, validation, localization, email templates
 
 ## Project structure
@@ -44,7 +44,7 @@ A TYPO3 14 LTS project template built on [Connetation](https://connetation.at) b
 │   ├── deploy.php                    Deployer rsync tasks and shared-file config
 │   └── hosts.yaml                    Server credentials (hostname, user, path, socket)
 ├── packages/                         Created by ddev setup-project
-│   └── t3kit-sitepackage/            conn/t3kit-sitepackage copied here, .git removed
+│   └── t3wtk-sitepackage/            connetation/t3wtk-sitepackage copied here, .git removed
 │                                     Tracked by this project's git — customize freely
 ├── public/                           TYPO3 web root
 │   ├── index.php
@@ -76,7 +76,7 @@ renames things for you.
 
 ### 2. Add Composer authentication — **required**
 
-`conn/t3kit-base`, `conn/t3kit-elements` and `conn/t3kit-sitepackage` are installed from the
+`connetation/t3wtk-base`, `connetation/t3wtk-elements` and `connetation/t3wtk-sitepackage` are installed from the
 private Connetation Composer repository (`https://composer-v2.connetation.at/`),
 which requires authentication. Create `auth.json` in the project root
 (it's gitignored, so it's never committed):
@@ -126,11 +126,11 @@ Then does the following in order:
 
 | Step | What happens |
 |------|-------------|
-| 1 | `composer install` — installs all dependencies including `conn/t3kit-sitepackage` from VCS |
+| 1 | `composer install` — installs all dependencies including `connetation/t3wtk-sitepackage` from VCS |
 | 2 | Creates `public/fileadmin/`, `var/`, `translations/` directories |
-| 3 | Copies `vendor/conn/t3kit-sitepackage/` → `packages/t3kit-sitepackage/`, removes `.git` |
-| 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `conn/t3kit-sitepackage: dev-local` |
-| 5 | `composer update conn/t3kit-sitepackage` — rewires vendor symlink to `packages/t3kit-sitepackage/` |
+| 3 | Copies `vendor/connetation/t3wtk-sitepackage/` → `packages/t3wtk-sitepackage/`, removes `.git` |
+| 4 | Updates `composer.json`: removes VCS sitepackage repo, sets `connetation/t3wtk-sitepackage: dev-local` |
+| 5 | `composer update connetation/t3wtk-sitepackage` — rewires vendor symlink to `packages/t3wtk-sitepackage/` |
 | 6 | `typo3 setup` — creates DB schema and admin user, then `extension:setup` + `cache:flush` |
 | 7 | Builds sitepackage CSS (`npm install && npm run build`) — skipped if installed from dist archive |
 | 8 | Removes the template's `.git` history and runs `git init` — your project starts from a clean slate |
@@ -144,7 +144,7 @@ git add -A
 git commit -m "Initial commit"
 ```
 
-From this point on, `packages/t3kit-sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `conn/t3kit-sitepackage` VCS remains.
+From this point on, `packages/t3wtk-sitepackage/` is fully owned by this project. All customisations are committed here — no connection to the upstream `connetation/t3wtk-sitepackage` VCS remains.
 
 ### 5. First login
 
@@ -164,18 +164,18 @@ Log into the TYPO3 backend and both pages are already there, ready to fill with 
 
 ### Sitepackage
 
-The sitepackage at `packages/t3kit-sitepackage/` is a full copy of `conn/t3kit-sitepackage`, freely editable:
+The sitepackage at `packages/t3wtk-sitepackage/` is a full copy of `connetation/t3wtk-sitepackage`, freely editable:
 
 - **CSS theme overrides**: edit `Resources/Private/Scss/_theme.scss`, then:
   ```bash
-  ddev exec "cd /var/www/html/packages/t3kit-sitepackage && npm run build"
+  ddev exec "cd /var/www/html/packages/t3wtk-sitepackage && npm run build"
   ```
   Or watch during development:
   ```bash
-  ddev exec "cd /var/www/html/packages/t3kit-sitepackage && npm run dev"
+  ddev exec "cd /var/www/html/packages/t3wtk-sitepackage && npm run dev"
   ```
 
-- **Fluid template overrides**: place templates in `Resources/Private/Templates/Page/`, `Partials/`, or `Layouts/` to override `conn_t3kit_base` equivalents
+- **Fluid template overrides**: place templates in `Resources/Private/Templates/Page/`, `Partials/`, or `Layouts/` to override `conn_t3wtk_base` equivalents
 
 - **TypoScript**: edit `Configuration/Sets/Sitepackage/setup.typoscript`
 
@@ -186,7 +186,7 @@ The sitepackage at `packages/t3kit-sitepackage/` is a full copy of `conn/t3kit-s
 Edit `config/sites/sitepackage/settings.yaml` to configure navbar style, footer layout, social links, branding, colours, etc.
 
 All available settings with descriptions are documented in:
-`vendor/conn/t3kit-base/Configuration/Sets/Base/settings.definitions.yaml`
+`vendor/connetation/t3wtk-base/Configuration/Sets/Base/settings.definitions.yaml`
 
 ## Deployment
 

@@ -18,18 +18,18 @@ strings, no code.
 Where things live
 ====================
 
-- **Generic validation engine** — ``vendor/conn/t3kit-base``'s
+- **Generic validation engine** — ``vendor/connetation/t3wtk-base``'s
   :file:`Resources/Private/JavaScript/main.js` (``initFormValidation``).
   Fully data-attribute driven (``[required]`` / ``[data-validate-type]`` +
   matching ``data-validate-*-message``), so it needs zero changes for a
   new form or field. Don't edit it per-project — see
   :ref:`extending-elements` for why (same reasoning applies to
-  ``conn/t3kit-base``).
+  ``connetation/t3wtk-base``).
 - **The actual form(s), email templates, and translations** —
-  :file:`packages/t3kit-sitepackage/Resources/Private/Forms/`,
+  :file:`packages/t3wtk-sitepackage/Resources/Private/Forms/`,
   :file:`Templates/Email/`, :file:`Layouts/Email/`, :file:`Language/`.
   Fully owned by this project, customize freely (same as everything else
-  under :file:`packages/t3kit-sitepackage/`, see :ref:`customisation-sitepackage`).
+  under :file:`packages/t3wtk-sitepackage/`, see :ref:`customisation-sitepackage`).
 
 .. _forms-full-guide:
 
@@ -38,10 +38,10 @@ Full guide
 
 The detailed how-to — adding a new form, wiring up validation, adding a
 language, adding an email template, and a note on why every path here is
-a hardcoded ``EXT:conn_t3kit_sitepackage/...`` reference — lives right next to
+a hardcoded ``EXT:conn_t3wtk_sitepackage/...`` reference — lives right next to
 the code:
-:file:`packages/t3kit-sitepackage/Resources/Private/Forms/README.md` (only
-present after ``ddev setup-project`` has copied ``conn/t3kit-sitepackage`` into
+:file:`packages/t3wtk-sitepackage/Resources/Private/Forms/README.md` (only
+present after ``ddev setup-project`` has copied ``connetation/t3wtk-sitepackage`` into
 :file:`packages/` — see :ref:`installation`).
 
 .. _forms-quick-reference:
