@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e62281cd82e6e53c5fc8025adb3bc75",
+    "content-hash": "2d94e19791f54fb511362845b2dae8af",
     "packages": [
         {
             "name": "b13/container",
@@ -557,11 +557,17 @@
         },
         {
             "name": "connetation/t3wtk-base",
-            "version": "3.0.10",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.com/connetation/toolkit/t3kit-base.git",
-                "reference": "48446950768b1067ac57f7b73580d3c0bb4e88ac"
+                "url": "https://github.com/connetation/t3wtk-base.git",
+                "reference": "57175f862bf874b5d29ca5bbc526a3b0222bdbca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/connetation/t3wtk-base/zipball/57175f862bf874b5d29ca5bbc526a3b0222bdbca",
+                "reference": "57175f862bf874b5d29ca5bbc526a3b0222bdbca",
+                "shasum": ""
             },
             "require": {
                 "typo3/cms-core": "^14.0",
@@ -584,6 +590,7 @@
                     "Connetation\\T3wtkBase\\": "Classes/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -594,15 +601,27 @@
                     "homepage": "https://www.connetation.at/"
                 }
             ],
-            "description": "Connetation Base for TYPO3 LTS 14 with Bootstrap 5, light/dark theme"
+            "description": "Connetation Base for TYPO3 LTS 14 with Bootstrap 5, light/dark theme",
+            "homepage": "https://github.com/connetation/t3wtk-base",
+            "support": {
+                "issues": "https://github.com/connetation/t3wtk-base/issues",
+                "source": "https://github.com/connetation/t3wtk-base"
+            },
+            "time": "2026-10-08T11:06:15+00:00"
         },
         {
             "name": "connetation/t3wtk-elements",
-            "version": "3.0.9",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.com/connetation/toolkit/t3kit-elements.git",
-                "reference": "fb0f09c032b412d604397c11a785a159de46de9e"
+                "url": "https://github.com/connetation/t3wtk-elements.git",
+                "reference": "fb9a62007e7d3831ecb83877d50e7135ec4bc362"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/connetation/t3wtk-elements/zipball/fb9a62007e7d3831ecb83877d50e7135ec4bc362",
+                "reference": "fb9a62007e7d3831ecb83877d50e7135ec4bc362",
+                "shasum": ""
             },
             "require": {
                 "b13/container": "^3.2",
@@ -625,6 +644,7 @@
                     "Connetation\\T3wtkElements\\": "Classes/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -635,20 +655,26 @@
                     "homepage": "https://www.connetation.at/"
                 }
             ],
-            "description": "Connetation Content Elements for TYPO3 LTS 14"
+            "description": "Connetation Content Elements for TYPO3 LTS 14",
+            "homepage": "https://github.com/connetation/t3wtk-elements",
+            "support": {
+                "issues": "https://github.com/connetation/t3wtk-elements/issues",
+                "source": "https://github.com/connetation/t3wtk-elements"
+            },
+            "time": "2026-10-08T11:06:15+00:00"
         },
         {
             "name": "connetation/t3wtk-sitepackage",
-            "version": "3.0.1",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
-                "url": "git@gitlab.com:connetation/toolkit/t3kit-sitepackage.git",
-                "reference": "98db81eb8e8aa13bddf4cbef7ed4595ce759dacd"
+                "url": "https://github.com/connetation/t3wtk-sitepackage.git",
+                "reference": "0d6ce94d530a29697d315ebc159b71d3180248d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/connetation%2Ftoolkit%2Ft3kit-sitepackage/repository/archive.zip?sha=a29c6b5f94e6679031be4e39a20a426838825cd6",
-                "reference": "a29c6b5f94e6679031be4e39a20a426838825cd6",
+                "url": "https://api.github.com/repos/connetation/t3wtk-sitepackage/zipball/0d6ce94d530a29697d315ebc159b71d3180248d9",
+                "reference": "0d6ce94d530a29697d315ebc159b71d3180248d9",
                 "shasum": ""
             },
             "require": {
@@ -676,6 +702,7 @@
                     "Connetation\\T3wtkSitepackage\\": "Classes/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -687,11 +714,12 @@
                 }
             ],
             "description": "Connetation Sitepackage – site-specific extension built on connetation/t3wtk-base for TYPO3 LTS 14",
+            "homepage": "https://github.com/connetation/t3wtk-sitepackage",
             "support": {
-                "source": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/tree/3.0.0",
-                "issues": "https://gitlab.com/connetation/toolkit/t3kit-sitepackage/-/issues"
+                "issues": "https://github.com/connetation/t3wtk-sitepackage/issues",
+                "source": "https://github.com/connetation/t3wtk-sitepackage"
             },
-            "time": "2026-10-06T14:18:31+02:00"
+            "time": "2026-10-08T11:06:15+00:00"
         },
         {
             "name": "dasprid/enum",
