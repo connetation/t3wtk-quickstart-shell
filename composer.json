@@ -7,6 +7,13 @@
         "issues": "https://github.com/connetation/t3wtk-quickstart-shell/issues",
         "source": "https://github.com/connetation/t3wtk-quickstart-shell"
     },
+    "authors": [
+        {
+            "name": "Connetation Web Engineering GmbH",
+            "email": "office@connetation.at",
+            "homepage": "https://www.connetation.at/"
+        }
+    ],
     "type": "project",
     "minimum-stability": "dev",
     "prefer-stable": true,
